@@ -206,19 +206,102 @@ class _FruitCutArcadeGameState extends State<FruitCutArcadeGame> with WidgetsBin
 class _FruitArenaPainter extends CustomPainter {
   _FruitArenaPainter({required this.fruits,required this.particles,required this.trail,required this.frozen,required this.shield});
   final List<_FruitArcadeItem> fruits; final List<_FruitParticle> particles; final List<Offset> trail; final bool frozen,shield;
-  @override void paint(Canvas canvas,Size size){
-    final grid=Paint()..color=Colors.white.withValues(alpha:.035);
-    for(var i=0;i<7;i++){canvas.drawLine(Offset(size.width*i/6,0),Offset(size.width*i/6,size.height),grid);}
-    for(var i=0;i<9;i++){canvas.drawLine(Offset(0,size.height*i/8),Offset(size.width,size.height*i/8),grid);}
-    for(final p in particles){canvas.drawCircle(Offset(p.x,p.y),2+3*p.life,Paint()..color=p.color.withValues(alpha:p.life.clamp(0.0,1.0)));}
-    for(final f in fruits){canvas.save();canvas.translate(f.x,f.y);canvas.rotate(f.angle);final r=f.r;
-      if(f.bomb){canvas.drawCircle(Offset.zero,r,Paint()..shader=const RadialGradient(colors:[Color(0xFF555555),Color(0xFF171717)]).createShader(Rect.fromCircle(center:Offset.zero,radius:r)));canvas.drawCircle(Offset.zero,r,Paint()..color=const Color(0xFFFF4757)..style=PaintingStyle.stroke..strokeWidth=2);canvas.drawLine(Offset(r*.2,-r*.8),Offset(r*.55,-r*1.1),Paint()..color=const Color(0xFFFFC226)..strokeWidth=4..strokeCap=StrokeCap.round);final t=TextPainter(text:const TextSpan(text:'✕',style:TextStyle(color:Colors.white,fontSize:22,fontWeight:FontWeight.w900)),textDirection:TextDirection.ltr)..layout();t.paint(canvas,Offset(-t.width/2,-t.height/2));}
-      else{final color=_fruitColors[f.type];canvas.drawCircle(Offset(1,3),r+1,Paint()..color=Colors.black.withValues(alpha:.25));canvas.drawCircle(Offset.zero,r,Paint()..shader=RadialGradient(center:const Alignment(-.35,-.45),colors:[Color.lerp(Colors.white,color,.25)!,color,Color.lerp(color,Colors.black,.25)!]).createShader(Rect.fromCircle(center:Offset.zero,radius:r)));canvas.drawCircle(Offset.zero,r,Paint()..color=Colors.white.withValues(alpha:.55)..style=PaintingStyle.stroke..strokeWidth=1.4);final t=TextPainter(text:TextSpan(text:_fruitEmoji[f.type],style:const TextStyle(fontSize:19)),textDirection:TextDirection.ltr)..layout();t.paint(canvas,Offset(-t.width/2,-t.height/2));}
+  @override
+  void paint(Canvas canvas, Size size) {
+    final gridPaint = Paint()..color = Colors.white.withValues(alpha: 0.035);
+    for (var i = 0; i < 7; i++) {
+      final x = size.width * i / 6;
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), gridPaint);
+    }
+    for (var i = 0; i < 9; i++) {
+      final y = size.height * i / 8;
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), gridPaint);
+    }
+
+    for (final particle in particles) {
+      final paint = Paint()..color = particle.color.withValues(alpha: particle.life.clamp(0.0, 1.0));
+      canvas.drawCircle(Offset(particle.x, particle.y), 2 + 3 * particle.life, paint);
+    }
+
+    for (final fruit in fruits) {
+      canvas.save();
+      canvas.translate(fruit.x, fruit.y);
+      canvas.rotate(fruit.angle);
+      final radius = fruit.r;
+      if (fruit.bomb) {
+        final bombPaint = Paint()
+          ..shader = const RadialGradient(colors: [Color(0xFF555555), Color(0xFF171717)])
+              .createShader(Rect.fromCircle(center: Offset.zero, radius: radius));
+        canvas.drawCircle(Offset.zero, radius, bombPaint);
+        final outline = Paint()
+          ..color = const Color(0xFFFF4757)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
+        canvas.drawCircle(Offset.zero, radius, outline);
+        final fuse = Paint()
+          ..color = const Color(0xFFFFC226)
+          ..strokeWidth = 4
+          ..strokeCap = StrokeCap.round;
+        canvas.drawLine(Offset(radius * 0.2, -radius * 0.8), Offset(radius * 0.55, -radius * 1.1), fuse);
+        final mark = TextPainter(
+          text: const TextSpan(text: '✕', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w900)),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        mark.paint(canvas, Offset(-mark.width / 2, -mark.height / 2));
+      } else {
+        final color = _fruitColors[fruit.type];
+        canvas.drawCircle(Offset(1, 3), radius + 1, Paint()..color = Colors.black.withValues(alpha: 0.25));
+        final fruitPaint = Paint()
+          ..shader = RadialGradient(
+            center: const Alignment(-0.35, -0.45),
+            colors: [Color.lerp(Colors.white, color, 0.25)!, color, Color.lerp(color, Colors.black, 0.25)!],
+          ).createShader(Rect.fromCircle(center: Offset.zero, radius: radius));
+        canvas.drawCircle(Offset.zero, radius, fruitPaint);
+        final outline = Paint()
+          ..color = Colors.white.withValues(alpha: 0.55)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.4;
+        canvas.drawCircle(Offset.zero, radius, outline);
+        final emoji = TextPainter(
+          text: TextSpan(text: _fruitEmoji[fruit.type], style: const TextStyle(fontSize: 19)),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        emoji.paint(canvas, Offset(-emoji.width / 2, -emoji.height / 2));
+      }
       canvas.restore();
     }
-    if(trail.length>1){final path=Path()..moveTo(trail.first.dx,trail.first.dy);for(final p in trail.skip(1)){path.lineTo(p.dx,p.dy);}canvas.drawPath(path,Paint()..color=const Color(0xFFB9F7FF).withValues(alpha:.9)..strokeWidth:5..strokeCap=StrokeCap.round..style=PaintingStyle.stroke);canvas.drawPath(path,Paint()..color=Colors.white.withValues(alpha:.75)..strokeWidth=1.8..strokeCap=StrokeCap.round..style=PaintingStyle.stroke);}
-    if(frozen){canvas.drawRect(Offset.zero&size,Paint()..color=const Color(0xFF18DCFF).withValues(alpha:.12));final t=TextPainter(text:const TextSpan(text:'❄ FREEZE',style:TextStyle(color:Colors.white,fontSize:18,fontWeight:FontWeight.w900)),textDirection:TextDirection.ltr)..layout();t.paint(canvas,Offset((size.width-t.width)/2,16));}
-    if(shield){canvas.drawCircle(Offset(size.width/2,size.height-28),17,Paint()..color=const Color(0xFF18DCFF).withValues(alpha:.2));}
+
+    if (trail.length > 1) {
+      final path = Path()..moveTo(trail.first.dx, trail.first.dy);
+      for (final point in trail.skip(1)) {
+        path.lineTo(point.dx, point.dy);
+      }
+      final glow = Paint()
+        ..color = const Color(0xFFB9F7FF).withValues(alpha: 0.9)
+        ..strokeWidth = 5
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke;
+      canvas.drawPath(path, glow);
+      final core = Paint()
+        ..color = Colors.white.withValues(alpha: 0.75)
+        ..strokeWidth = 1.8
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke;
+      canvas.drawPath(path, core);
+    }
+
+    if (frozen) {
+      canvas.drawRect(Offset.zero & size, Paint()..color = const Color(0xFF18DCFF).withValues(alpha: 0.12));
+      final label = TextPainter(
+        text: const TextSpan(text: '❄ FREEZE', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      label.paint(canvas, Offset((size.width - label.width) / 2, 16));
+    }
+    if (shield) {
+      final shieldPaint = Paint()..color = const Color(0xFF18DCFF).withValues(alpha: 0.2);
+      canvas.drawCircle(Offset(size.width / 2, size.height - 28), 17, shieldPaint);
+    }
   }
   @override bool shouldRepaint(covariant _FruitArenaPainter old)=>true;
 }
