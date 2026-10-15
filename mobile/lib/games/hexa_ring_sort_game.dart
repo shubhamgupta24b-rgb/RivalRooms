@@ -55,6 +55,68 @@ class _HexaRingSortGameState extends State<HexaRingSortGame> {
   void _undo(){if(history.isEmpty||won)return;setState((){stacks=history.removeLast();selected=-1;});}
   void _hint(){if(hints<=0||won)return;for(var f=0;f<stacks.length;f++){for(var t=0;t<stacks.length;t++){if(_can(f,t)){setState((){selected=f;hints--;});ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('Move a ring from stack ${f+1} to stack ${t+1}.')));return;}}}ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('No useful move found. Try Undo.')));}
   void _changeMode(int v){setState((){difficulty=v;level=min(level,unlocked[v]??1);_newLevel();});}
+  void _showLevels() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, refresh) => SizedBox(
+          height: MediaQuery.of(ctx).size.height * .72,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                const Text('Level trail', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 6,
+                  children: [
+                    for (var d = 0; d < 3; d++)
+                      ChoiceChip(
+                        label: Text(['Easy', 'Medium', 'Hard'][d]),
+                        selected: difficulty == d,
+                        onSelected: (_) {
+                          setState(() { difficulty = d; level = min(level, unlocked[d] ?? 1); _newLevel(); });
+                          refresh(() {});
+                        },
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: GridView.builder(
+                    itemCount: 50,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 5,
+                      crossAxisSpacing: 7,
+                      mainAxisSpacing: 7,
+                    ),
+                    itemBuilder: (_, i) {
+                      final n = i + 1;
+                      final open = n <= (unlocked[difficulty] ?? 1);
+                      return FilledButton(
+                        onPressed: open ? () {
+                          setState(() { level = n; _newLevel(); });
+                          Navigator.pop(ctx);
+                        } : null,
+                        style: FilledButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          backgroundColor: n == level ? const Color(0xFFFFC857) : Colors.white,
+                          foregroundColor: const Color(0xFF282036),
+                        ),
+                        child: Text(open ? '$n' : '🔒'),
+                      );
+                    },
+                  ),
+                ),
+                TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Back to board')),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +129,11 @@ class _HexaRingSortGameState extends State<HexaRingSortGame> {
         ),
         title: const Text('Hexa Ring Sort', style: TextStyle(fontWeight: FontWeight.w900)),
         actions: [
+          IconButton(
+            tooltip: 'Levels',
+            onPressed: _showLevels,
+            icon: const Icon(Icons.map_outlined),
+          ),
           IconButton(
             tooltip: 'Restart level',
             onPressed: () => setState(_newLevel),
