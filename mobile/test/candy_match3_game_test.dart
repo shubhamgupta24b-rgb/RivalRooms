@@ -35,6 +35,6 @@ void main() {
     expect(find.text('EASY'), findsOneWidget);
     expect(find.text('MEDIUM'), findsAtLeastNWidgets(1));
     expect(find.text('HARD'), findsOneWidget);
-    expect(find.byType(GridView), findsOneWidget);
+    expect(find.byType(GridView), findsNWidgets(2));
   });
 }
