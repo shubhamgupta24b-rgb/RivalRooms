@@ -32,7 +32,7 @@ void main() {
 
     await tester.pumpWidget(const MaterialApp(home: FruitCutArcadeGame()));
     await tester.tap(find.byTooltip('50 Levels'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Fruit trail'), findsOneWidget);
     expect(find.text('EASY'), findsOneWidget);
     expect(find.text('MEDIUM'), findsOneWidget);
