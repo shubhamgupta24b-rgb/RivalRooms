@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const RivalRoomsApp());
@@ -46,6 +47,10 @@ class _HomeScreenState extends State<HomeScreen> {
  void openGame(GameInfo game) {
    if(game.title=='Memory Match') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const MemoryGame()));
+   } else if (game.title=='Fruit Cut') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const FruitCutGame()));
+   } else if (game.title=='Basketball Hoops') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const BasketballGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
@@ -137,3 +142,58 @@ class _MemoryGameState extends State<MemoryGame> {
 }
 
 class SettingsScreen extends StatelessWidget { const SettingsScreen({super.key}); @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Settings')),body:ListView(padding:const EdgeInsets.all(20),children:const[Card(child:ListTile(leading:Icon(Icons.volume_up_outlined),title:Text('Sound'),subtitle:Text('Sound settings will be added with game preferences.'))),Card(child:ListTile(leading:Icon(Icons.privacy_tip_outlined),title:Text('Privacy policy'),subtitle:Text('Privacy information belongs here in Settings.'))),SizedBox(height:14),Text('RivalRooms • Early build',style:TextStyle(color:muted))])); }
+
+
+class FruitCutGame extends StatefulWidget {
+  const FruitCutGame({super.key});
+  @override State<FruitCutGame> createState()=>_FruitCutGameState();
+}
+class _FruitCutGameState extends State<FruitCutGame> {
+  final random=Random();
+  final fruitPool=['🍉','🍊','🍋','🍓','🥝','🍍'];
+  late List<String> fruits;
+  int score=0,seconds=30;
+  bool running=false,finished=false;
+  Timer? timer;
+  @override void initState(){super.initState();_newRound();}
+  void _newRound(){timer?.cancel();setState((){fruits=List.generate(12,(_)=>fruitPool[random.nextInt(fruitPool.length)]);score=0;seconds=30;running=true;finished=false;});timer=Timer.periodic(const Duration(seconds:1),(t){if(!mounted)return;if(seconds<=1){t.cancel();setState((){seconds=0;running=false;finished=true;});}else{setState(()=>seconds--);}});}
+  void _slice(int i){if(!running)return;setState((){score+=10;fruits[i]=fruitPool[random.nextInt(fruitPool.length)];});}
+  @override void dispose(){timer?.cancel();super.dispose();}
+  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Fruit Cut',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:_newRound,icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[
+    Row(children:[_scorePill('SCORE',score.toString()),const Spacer(),_scorePill('TIME','${seconds}s')]),
+    const SizedBox(height:14),const Align(alignment:Alignment.centerLeft,child:Text('Tap the fruit.',style:TextStyle(fontSize:27,fontWeight:FontWeight.w900,letterSpacing:-.8))),
+    const Align(alignment:Alignment.centerLeft,child:Text('Quick taps. Clean cuts. Chase your best.',style:TextStyle(color:muted))),
+    const SizedBox(height:18),
+    Expanded(child:GridView.builder(itemCount:fruits.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:3,crossAxisSpacing:12,mainAxisSpacing:12),itemBuilder:(context,i)=>Material(color:Colors.white,borderRadius:BorderRadius.circular(24),child:InkWell(onTap:()=>_slice(i),borderRadius:BorderRadius.circular(24),child:Center(child:Text(fruits[i],style:const TextStyle(fontSize:47))))))),
+    if(finished)Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:const Color(0xFFD4E4C8),borderRadius:BorderRadius.circular(18)),child:Row(children:[Expanded(child:Text('Time! Final score: $score',style:const TextStyle(fontWeight:FontWeight.w900))),FilledButton(onPressed:_newRound,child:const Text('Play again'))]))
+  ]))));
+}
+
+Widget _scorePill(String label,String value)=>Container(padding:const EdgeInsets.symmetric(horizontal:17,vertical:11),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(15)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(label,style:const TextStyle(fontSize:10,color:muted,fontWeight:FontWeight.w800,letterSpacing:1)),const SizedBox(height:3),Text(value,style:const TextStyle(fontSize:20,fontWeight:FontWeight.w900))]));
+
+class BasketballGame extends StatefulWidget {
+ const BasketballGame({super.key});
+ @override State<BasketballGame> createState()=>_BasketballGameState();
+}
+class _BasketballGameState extends State<BasketballGame>{
+ int score=0,seconds=30,streak=0;bool running=false,finished=false;Timer? timer;
+ void _start(){timer?.cancel();setState((){score=0;seconds=30;streak=0;running=true;finished=false;});timer=Timer.periodic(const Duration(seconds:1),(t){if(!mounted)return;if(seconds<=1){t.cancel();setState((){seconds=0;running=false;finished=true;});}else{setState(()=>seconds--);}});}
+ void _shoot(){if(!running)return;setState((){streak++;score+=streak%3==0?3:2;});}
+ @override void initState(){super.initState();_start();}
+ @override void dispose(){timer?.cancel();super.dispose();}
+ @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Basketball Hoops',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:_start,icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[
+  Row(children:[_scorePill('POINTS',score.toString()),const Spacer(),_scorePill('TIME','${seconds}s')]),
+  const SizedBox(height:18),const Align(alignment:Alignment.centerLeft,child:Text('Find your rhythm.',style:TextStyle(fontSize:27,fontWeight:FontWeight.w900,letterSpacing:-.8))),
+  const Align(alignment:Alignment.centerLeft,child:Text('Tap SHOOT to sink the next basket.',style:TextStyle(color:muted))),
+  const SizedBox(height:20),
+  Expanded(child:Container(width:double.infinity,decoration:BoxDecoration(color:const Color(0xFFE7D7BD),borderRadius:BorderRadius.circular(26)),child:Stack(alignment:Alignment.center,children:[
+   Positioned(top:28,child:Container(width:142,height:94,decoration:BoxDecoration(border:Border.all(color:const Color(0xFFB55E39),width:7),borderRadius:BorderRadius.circular(10)))),
+   Positioned(top:116,child:Container(width:95,height:10,decoration:BoxDecoration(color:coral,borderRadius:BorderRadius.circular(6)))),
+   Positioned(bottom:40,child:Container(width:200,height:100,decoration:BoxDecoration(border:Border.all(color:Colors.white.withValues(alpha:.75),width:3),borderRadius:const BorderRadius.vertical(top:Radius.circular(100))))),
+   const Positioned(bottom:68,child:Text('🏀',style:TextStyle(fontSize:76))),
+  ]))),
+  const SizedBox(height:18),
+  SizedBox(width:double.infinity,height:58,child:FilledButton.icon(onPressed:running?_shoot:_start,icon:const Icon(Icons.sports_basketball_rounded),label:Text(finished?'PLAY AGAIN':'SHOOT',style:const TextStyle(fontWeight:FontWeight.w900,letterSpacing:1.3)),style:FilledButton.styleFrom(backgroundColor:coral,foregroundColor:ink,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(17))))),
+  if(finished)Padding(padding:const EdgeInsets.only(top:12),child:Text('Final score: $score',style:const TextStyle(fontWeight:FontWeight.w800))),
+ ]))));
+}
