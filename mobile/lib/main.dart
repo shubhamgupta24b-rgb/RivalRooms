@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'games/connect_four_game.dart';
 import 'package:flutter/scheduler.dart';
 
 void main() => runApp(const RivalRoomsApp());
@@ -57,6 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const GuessPersonGame()));
    } else if (game.title=='Suika Pop') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const SuikaPopGame()));
+   } else if (game.title=='Connect Four') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const ConnectFourGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
