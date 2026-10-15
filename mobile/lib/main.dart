@@ -31,6 +31,7 @@ const games = <GameInfo>[
  GameInfo('Memory Match','Find matching pairs','🧠','Quick play',Color(0xFFE9D9A9)),
  GameInfo('Basketball Hoops','Beat your best score','🏀','Quick play',Color(0xFFF1C6A3)),
  GameInfo('Fruit Cut','Slice. Score. Repeat.','🍉','Quick play',Color(0xFFD4E4C8)),
+ GameInfo('Suika Pop','Merge fruits. Grow the watermelon.','🍒','Quick play',Color(0xFFFFD8BE)),
  GameInfo('Guess the Person','Can you read their clues?','🕵️','Party games',Color(0xFFDAD6ED)),
  GameInfo('Connect Four','Four in a row wins','🔴','Board games',Color(0xFFF0D1CB)),
  GameInfo('Battleship','Outsmart your opponent','🚢','Board games',Color(0xFFC9DFE1)),
@@ -53,6 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const BasketballGame()));
    } else if (game.title=='Guess the Person') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const GuessPersonGame()));
+   } else if (game.title=='Suika Pop') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const SuikaPopGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
@@ -238,6 +241,160 @@ class _GuessPersonGameState extends State<GuessPersonGame> {
         const Spacer(),
     ]))),
   );
+}
+
+
+class SuikaPopGame extends StatefulWidget {
+  const SuikaPopGame({super.key});
+  @override State<SuikaPopGame> createState() => _SuikaPopGameState();
+}
+class _SuikaPopGameState extends State<SuikaPopGame> with SingleTickerProviderStateMixin {
+  static const names = ['Cherry','Strawberry','Grape','Orange','Persimmon','Apple','Pear','Peach','Pineapple','Melon','Watermelon'];
+  static const emojis = ['🍒','🍓','🍇','🍊','🟠','🍎','🍐','🍑','🍍','🍈','🍉'];
+  static const colors = [Color(0xFFFF3B5C),Color(0xFFFF5E4D),Color(0xFF9B5DE5),Color(0xFFFF9F1C),Color(0xFFFF7B00),Color(0xFFE63946),Color(0xFFA7C957),Color(0xFFFF85A1),Color(0xFFF4D35E),Color(0xFF52B788),Color(0xFF2D6A4F)];
+  static const radii = [13.0,17.0,21.0,25.0,29.0,34.0,39.0,44.0,49.0,55.0,61.0];
+  final random = Random();
+  final List<_SuikaFruit> fruits = [];
+  late final Ticker _ticker;
+  Duration _last = Duration.zero;
+  double _width = 320, _height = 440, _aimX = 160;
+  int score = 0, best = 0, currentTier = 0, nextTier = 0;
+  int shakes = 2, pops = 2, boosts = 2, overflowFrames = 0;
+  bool gameOver = false, showAim = true, canDrop = true;
+  double _dropCooldown = 0;
+  @override void initState() {
+    super.initState();
+    currentTier = random.nextInt(4); nextTier = random.nextInt(4);
+    _ticker = createTicker(_tick)..start();
+  }
+  void _tick(Duration elapsed) {
+    if (_last == Duration.zero) { _last = elapsed; return; }
+    final dt = ((elapsed - _last).inMicroseconds / 1000000).clamp(0.0, .04);
+    _last = elapsed;
+    if (!gameOver) {
+      _dropCooldown = max(0, _dropCooldown - dt);
+      canDrop = _dropCooldown <= 0;
+      for (final f in fruits) {
+        f.vy += 620 * dt;
+        f.x += f.vx * dt; f.y += f.vy * dt;
+        if (f.x - f.r < 4) { f.x = f.r + 4; f.vx = f.vx.abs() * .45; }
+        if (f.x + f.r > _width - 4) { f.x = _width - f.r - 4; f.vx = -f.vx.abs() * .45; }
+        if (f.y + f.r > _height - 4) { f.y = _height - f.r - 4; f.vy = -f.vy.abs() * .16; f.vx *= .94; }
+      }
+      for (var pass=0; pass<2; pass++) {
+        for (var i=0; i<fruits.length; i++) {
+          for (var j=i+1; j<fruits.length; j++) {
+            final a=fruits[i], b=fruits[j];
+            final dx=b.x-a.x, dy=b.y-a.y, d=sqrt(dx*dx+dy*dy), minD=a.r+b.r;
+            if (d >= minD || d == 0) continue;
+            if (a.tier == b.tier && a.tier < names.length-1) {
+              final tier=a.tier+1, x=(a.x+b.x)/2, y=(a.y+b.y)/2;
+              fruits.removeAt(j); fruits.removeAt(i);
+              fruits.add(_SuikaFruit(x,y,tier,vy:-150));
+              score += (1 << (tier+1));
+              best=max(best,score);
+              i=-1; break;
+            }
+            final overlap=minD-d, nx=dx/d, ny=dy/d;
+            a.x -= nx*overlap*.5; a.y -= ny*overlap*.5;
+            b.x += nx*overlap*.5; b.y += ny*overlap*.5;
+            if ((a.vx-b.vx)*nx+(a.vy-b.vy)*ny > 0) {
+              final avx=a.vx, avy=a.vy; a.vx=b.vx*.55; a.vy=b.vy*.35; b.vx=avx*.55; b.vy=avy*.35;
+            }
+          }
+        }
+      }
+      final danger=fruits.any((f)=>f.y-f.r<64 && f.vy.abs()<25);
+      overflowFrames = danger ? overflowFrames+1 : max(0,overflowFrames-2);
+      if (overflowFrames > 100) gameOver=true;
+    }
+    if (mounted) setState(() {});
+  }
+  void _drop() {
+    if (gameOver || !canDrop) return;
+    final r=radii[currentTier];
+    fruits.add(_SuikaFruit(_aimX.clamp(r+4,_width-r-4), 30, currentTier, vy:75, vx:(random.nextDouble()-.5)*12));
+    currentTier=nextTier; nextTier=random.nextInt(5); _dropCooldown=.48; canDrop=false;
+    setState(() {});
+  }
+  void _reset() {
+    setState(() { fruits.clear(); score=0; overflowFrames=0; gameOver=false; shakes=2; pops=2; boosts=2; currentTier=random.nextInt(4); nextTier=random.nextInt(4); canDrop=true; _dropCooldown=0; });
+  }
+  void _shake() {
+    if (shakes==0 || gameOver) return;
+    setState(() { shakes--; for(final f in fruits){f.vy=-180-random.nextDouble()*140;f.vx+=(random.nextDouble()-.5)*180;} });
+  }
+  void _pop() {
+    if (pops==0 || gameOver || fruits.isEmpty) return;
+    fruits.sort((a,b)=>a.tier.compareTo(b.tier));
+    setState(() { pops--; fruits.removeRange(0,min(2,fruits.length)); });
+  }
+  void _boost() {
+    if (boosts==0 || gameOver || currentTier>=names.length-1) return;
+    setState(() { boosts--; currentTier++; });
+  }
+  @override void dispose(){_ticker.dispose();super.dispose();}
+  @override Widget build(BuildContext context)=>Scaffold(
+    appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Suika Pop',style:TextStyle(fontWeight:FontWeight.w900)),actions:[IconButton(tooltip:'Aim line',onPressed:()=>setState(()=>showAim=!showAim),icon:Icon(showAim?Icons.gps_fixed_rounded:Icons.gps_not_fixed_rounded)),IconButton(tooltip:'Reset',onPressed:_reset,icon:const Icon(Icons.refresh_rounded))]),
+    body:SafeArea(child:LayoutBuilder(builder:(context,box){
+      _width=box.maxWidth.clamp(260.0,520.0); _height=max(300.0,box.maxHeight-190); _aimX=_aimX.clamp(20,_width-20);
+      return Padding(padding:const EdgeInsets.fromLTRB(14,4,14,12),child:Column(children:[
+        Row(children:[
+          Expanded(child:_suikaStat('SCORE','$score')),
+          const SizedBox(width:8),Expanded(child:_suikaStat('BEST','$best')),
+          const SizedBox(width:8),Expanded(child:Container(padding:const EdgeInsets.all(10),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(15)),child:Row(children:[Text(emojis[nextTier],style:const TextStyle(fontSize:25)),const SizedBox(width:6),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[const Text('NEXT',style:TextStyle(fontSize:9,color:muted,fontWeight:FontWeight.w900)),Text(names[nextTier],maxLines:1,overflow:TextOverflow.ellipsis,style:const TextStyle(fontSize:11,fontWeight:FontWeight.w800))]))]))),
+        ]),
+        const SizedBox(height:10),
+        Expanded(child:Center(child:AspectRatio(aspectRatio:_width/_height,child:GestureDetector(
+          behavior:HitTestBehavior.opaque,
+          onTapDown:(d){_aimX=d.localPosition.dx;_drop();},
+          onPanUpdate:(d)=>setState(()=>_aimX=d.localPosition.dx.clamp(10,_width-10)),
+          onPanEnd:(_)=>_drop(),
+          child:ClipRRect(borderRadius:BorderRadius.circular(22),child:CustomPaint(
+            painter:_SuikaPainter(fruits:fruits,width:_width,height:_height,aimX:_aimX,aimTier:currentTier,showAim:showAim,gameOver:gameOver,overflow:overflowFrames>0),
+            child:gameOver?Container(color:const Color(0xAA3B2925),child:Center(child:Column(mainAxisSize:MainAxisSize.min,children:[const Text('JAR OVERFLOWED',style:TextStyle(color:Colors.white,fontWeight:FontWeight.w900,fontSize:23)),const SizedBox(height:6),Text('Score  $score',style:const TextStyle(color:Colors.white,fontWeight:FontWeight.w700,fontSize:17)),const SizedBox(height:14),FilledButton(onPressed:_reset,child:const Text('Play again'))]))):null,
+          )),
+        )))),
+        const SizedBox(height:10),
+        Row(children:[
+          Expanded(child:_powerButton('🫨','Shake jar',shakes,_shake)),
+          const SizedBox(width:8),Expanded(child:_powerButton('✨','Berry pop',pops,_pop)),
+          const SizedBox(width:8),Expanded(child:_powerButton('⬆️','Evo boost',boosts,_boost)),
+        ]),
+        const SizedBox(height:8),
+        Text('Drop matching fruits to merge them into bigger ones.',style:TextStyle(color:muted,fontSize:12)),
+      ]));
+    })),
+  );
+  Widget _suikaStat(String label,String value)=>Container(padding:const EdgeInsets.symmetric(horizontal:12,vertical:10),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(15)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(label,style:const TextStyle(fontSize:9,color:muted,fontWeight:FontWeight.w900,letterSpacing:1)),Text(value,style:const TextStyle(fontSize:20,fontWeight:FontWeight.w900,color:ink))]));
+  Widget _powerButton(String emoji,String title,int count,VoidCallback action)=>Expanded(child:FilledButton.tonal(onPressed:count>0&&!gameOver?action:null,style:FilledButton.styleFrom(padding:const EdgeInsets.symmetric(vertical:10),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14))),child:Column(children:[Text(emoji,style:const TextStyle(fontSize:19)),Text(title,style:const TextStyle(fontSize:10,fontWeight:FontWeight.w800)),Text('$count left',style:const TextStyle(fontSize:9))])));
+}
+class _SuikaFruit {
+  double x,y,vx,vy; final int tier; late final double r;
+  _SuikaFruit(this.x,this.y,this.tier,{this.vx=0,this.vy=0}) { r=_SuikaPopGameState.radii[tier]; }
+}
+class _SuikaPainter extends CustomPainter {
+  final List<_SuikaFruit> fruits; final double width,height,aimX; final int aimTier; final bool showAim,gameOver,overflow;
+  _SuikaPainter({required this.fruits,required this.width,required this.height,required this.aimX,required this.aimTier,required this.showAim,required this.gameOver,required this.overflow});
+  @override void paint(Canvas canvas,Size size) {
+    final rect=Offset.zero & size;
+    canvas.drawRect(rect,Paint()..shader=const LinearGradient(begin:Alignment.topCenter,end:Alignment.bottomCenter,colors:[Color(0xFFFFF8EE),Color(0xFFFFDCC5)]).createShader(rect));
+    final danger=Paint()..color=overflow?const Color(0xFFFF4C50):const Color(0x66FF5E62)..strokeWidth=2;
+    for(double x=0;x<size.width;x+=12){canvas.drawLine(Offset(x,64),Offset(min(x+6,size.width),64),danger);}
+    if(showAim&&!gameOver){final p=Paint()..color=const Color(0x66FF5E62)..strokeWidth=1.5;for(double y=30;y<size.height;y+=12){canvas.drawLine(Offset(aimX,y),Offset(aimX,min(y+5,size.height)),p);} _fruit(canvas,Offset(aimX,30),_SuikaPopGameState.radii[aimTier],aimTier,alpha:.85);}
+    for(final f in fruits){_fruit(canvas,Offset(f.x,f.y),f.r,f.tier);}
+    canvas.drawRRect(RRect.fromRectAndRadius(Rect.fromLTWH(0,0,size.width,size.height),const Radius.circular(22)),Paint()..color=Colors.white.withValues(alpha:.5)..style=PaintingStyle.stroke..strokeWidth=5);
+  }
+  void _fruit(Canvas canvas,Offset center,double r,int tier,{double alpha=1}) {
+    canvas.save();canvas.translate(center.dx,center.dy);
+    final color=_SuikaPopGameState.colors[tier];
+    canvas.drawCircle(Offset(0,2),r,Paint()..color=Colors.black.withValues(alpha:.08*alpha));
+    canvas.drawCircle(Offset.zero,r,Paint()..shader=RadialGradient(center:const Alignment(-.35,-.45),radius:1,colors:[Color.lerp(Colors.white,color,.25)!,color]).createShader(Rect.fromCircle(center:Offset.zero,radius:r))..color=Colors.white.withValues(alpha:alpha));
+    canvas.drawCircle(Offset.zero,r,Paint()..color=Colors.white.withValues(alpha:.55*alpha)..style=PaintingStyle.stroke..strokeWidth=1.6);
+    if(r>=15){final eye=Paint()..color=const Color(0xFF3B1F1E).withValues(alpha:alpha);canvas.drawCircle(Offset(-r*.25,-r*.08),max(1.5,r*.075),eye);canvas.drawCircle(Offset(r*.25,-r*.08),max(1.5,r*.075),eye);final smile=Path()..moveTo(-r*.13,r*.18)..quadraticBezierTo(0,r*.32,r*.13,r*.18);canvas.drawPath(smile,Paint()..color=const Color(0xFF3B1F1E).withValues(alpha:alpha)..style=PaintingStyle.stroke..strokeWidth=max(1,r*.045)..strokeCap=StrokeCap.round);}
+    canvas.restore();
+  }
+  @override bool shouldRepaint(covariant _SuikaPainter old)=>true;
 }
 
 class SettingsScreen extends StatelessWidget { const SettingsScreen({super.key}); @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Settings')),body:ListView(padding:const EdgeInsets.all(20),children:const[Card(child:ListTile(leading:Icon(Icons.volume_up_outlined),title:Text('Sound'),subtitle:Text('Sound settings will be added with game preferences.'))),Card(child:ListTile(leading:Icon(Icons.privacy_tip_outlined),title:Text('Privacy policy'),subtitle:Text('Privacy information belongs here in Settings.'))),SizedBox(height:14),Text('RivalRooms • Early build',style:TextStyle(color:muted))])); }
