@@ -19,8 +19,8 @@ void main() {
       await tester.pump();
     }
 
-    expect(find.text('Sipahi, identify the Chor'), findsOneWidget);
-    expect(find.text('Player 1'), findsOneWidget);
+    expect(find.textContaining('identify the Chor'), findsOneWidget);
+    expect(find.byType(OutlinedButton), findsNWidgets(3));
     await tester.binding.setSurfaceSize(null);
   });
 }
