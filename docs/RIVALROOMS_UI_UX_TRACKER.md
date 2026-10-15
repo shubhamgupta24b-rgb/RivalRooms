@@ -32,12 +32,12 @@ Every iteration must:
 
 | Item | Design/spec | Implementation | Validation | Notes |
 |---|---|---|---|---|
-| Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Starter implementation in `mobile/lib/main.dart` | Not run | Home, Play online, All games navigation; clean earthy palette; Privacy Policy is only referenced in Settings |
-| Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Local tap-to-shoot prototype in `mobile/lib/main.dart` | Not run | Primary Shoot action; preserve timing, score, phase and server updates |
-| Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Local timed tap-to-slice prototype in `mobile/lib/main.dart` | Not run | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
+| Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Starter implementation in `mobile/lib/main.dart` | CI rerun pending after widget-tree fix | Home, Play online, All games navigation; clean earthy palette; Privacy Policy is only referenced in Settings |
+| Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Local tap-to-shoot prototype in `mobile/lib/main.dart` | CI rerun pending | Primary Shoot action; preserve timing, score, phase and server updates |
+| Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Local timed tap-to-slice prototype in `mobile/lib/main.dart` | CI rerun pending | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
 | Settings | Not started | Starter implementation in `mobile/lib/main.dart` | Not run | Settings entry exists; privacy policy placeholder remains inside Settings |
 | In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Basic visible Back on prototype game screens | Not run | Active online match confirmation and Android Back policy are not implemented yet |
-| Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | Not run | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
+| Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | CI rerun pending | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
 | Maths Duel | `docs/design/MATHS_DUEL_SPEC.md` | Not started | Not run | One-question focus; preserve answer validation and timer |
 | Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Not started | Not run | Progressive hints; preserve hint order and scoring |
 | Pool | `docs/design/POOL_SPEC.md` | Not started | Not run | Separate aiming from shooting; preserve physics |
