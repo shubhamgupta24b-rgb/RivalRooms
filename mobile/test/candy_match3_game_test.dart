@@ -23,8 +23,8 @@ void main() {
   });
 
   testWidgets('level map exposes 50 level slots and difficulty selection', (tester) async {
-    await tester.view.setPhysicalSize(const Size(430, 900));
-    await tester.view.setDevicePixelRatio(1);
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
