@@ -33,8 +33,8 @@ Every iteration must:
 | Item | Design/spec | Implementation | Validation | Notes |
 |---|---|---|---|---|
 | Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Starter implementation in `mobile/lib/main.dart` | Not run | Home, Play online, All games navigation; clean earthy palette; Privacy Policy is only referenced in Settings |
-| Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Not started | Not run | Primary Shoot action; preserve timing, score, phase and server updates |
-| Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Not started | Not run | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
+| Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Local tap-to-shoot prototype in `mobile/lib/main.dart` | Not run | Primary Shoot action; preserve timing, score, phase and server updates |
+| Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Local timed tap-to-slice prototype in `mobile/lib/main.dart` | Not run | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
 | Settings | Not started | Starter implementation in `mobile/lib/main.dart` | Not run | Settings entry exists; privacy policy placeholder remains inside Settings |
 | In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Basic visible Back on prototype game screens | Not run | Active online match confirmation and Android Back policy are not implemented yet |
 | Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | Not run | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
@@ -66,9 +66,9 @@ Every iteration must:
 ## Implementation kickoff — Flutter starter and server migration
 - **Principle:** make the first playable path tangible while keeping multiplayer status honest.
 - **Flutter artifacts:** `mobile/pubspec.yaml`, `mobile/lib/main.dart`, `mobile/test/widget_test.dart`, `mobile/README.md`.
-- **Implemented:** starter Home with Home / Play online / All games navigation, game cards, Settings entry, Privacy Policy kept in Settings, a local Memory Match prototype, restart, move counter, completion dialog, and basic visible Back controls on game screens.
+- **Implemented:** starter Home with Home / Play online / All games navigation, game cards, Settings entry, Privacy Policy kept in Settings, playable local Memory Match, timed Fruit Cut and Basketball Hoops prototypes, restart/score/timer feedback, completion state for Fruit Cut/Basketball, and basic visible Back controls on game screens.
 - **Server migration:** copied the Node server entry/config, room manager/store, socket handlers, game registry and game handlers, privacy page, package metadata, Render blueprint, and server tests into `server/`. This is a partial migration; verify missing dependencies/files before deployment.
-- **Not implemented yet:** Flutter socket/room integration, existing full game source/assets migration, active-match exit confirmation, and the remaining games. Online buttons currently show explanatory placeholders.
+- **Not implemented yet:** Flutter socket/room integration, authoritative server synchronization, existing full game source/assets migration, active-match exit confirmation, and the remaining games. Online buttons currently show explanatory placeholders; the local basketball prototype is tap-based rather than physics/shoot-payload parity.
 - **Validation:** not run. No claim of successful Flutter analyze/test/build or Node test/deployment.
 
 ## Current iteration — First 10-game design batch
