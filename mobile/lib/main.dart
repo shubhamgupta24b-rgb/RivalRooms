@@ -12,6 +12,7 @@ import 'games/battleship_game.dart';
 import 'games/chicken_jump_game.dart';
 import 'games/carrom_game.dart';
 import 'games/bike_racing_game.dart';
+import 'games/raja_mantri_chor_sipahi_game.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -53,6 +54,7 @@ const games = <GameInfo>[
  GameInfo('Chicken Jump','Jump over obstacles and beat your best','🐔','Quick play',Color(0xFFF2D9A8)),
  GameInfo('Carrom','Aim your striker and pocket the coins','🟤','Board games',Color(0xFFE7C9A7)),
  GameInfo('Bike Racing','Dodge traffic and beat your best','🏍️','Quick play',Color(0xFFD4E4C8)),
+ GameInfo('Raja Mantri Chor Sipahi','Four roles. One clever guess.','👑','Party games',Color(0xFFE9D9A9)),
 ];
 
 class HomeScreen extends StatefulWidget {
@@ -90,6 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const CarromGame()));
    } else if (game.title=='Bike Racing') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const BikeRacingGame()));
+   } else if (game.title=='Raja Mantri Chor Sipahi') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const RajaMantriChorSipahiGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
