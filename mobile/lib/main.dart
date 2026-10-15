@@ -8,6 +8,7 @@ import 'games/connect_four_game.dart';
 import 'games/candy_match3_game.dart';
 import 'games/fruit_cut_arcade_game.dart';
 import 'games/pool_game.dart';
+import 'games/battleship_game.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -75,6 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const ConnectFourGame()));
    } else if (game.title=='Pool') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const PoolGame()));
+   } else if (game.title=='Battleship') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const BattleshipGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
