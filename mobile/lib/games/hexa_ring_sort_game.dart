@@ -22,7 +22,7 @@ class _HexaRingSortGameState extends State<HexaRingSortGame> {
     capacity = difficulty == 0 || (difficulty == 1 && level < 12) ? 3 : 4;
     final colors = min(7, 4 + level ~/ 12 + difficulty);
     final board = <List<int>>[];
-    for (var c=0;c<colors;c++) { board.add(List<int>.filled(capacity,c)); }
+    for (var c=0;c<colors;c++) { board.add(List<int>.filled(capacity,c,growable:true)); }
     board.add(<int>[]); board.add(<int>[]);
     var lastFrom=-1, lastTo=-1;
     for (var step=0;step<(20+level*3+difficulty*15)*4;step++) {
