@@ -1,6 +1,6 @@
 # RivalRooms Implementation Tracker
 
-Last updated: 2026-10-15 (Asia/Calcutta)
+Last updated: 2026-10-15 14:50 (Asia/Calcutta)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
 
@@ -22,6 +22,15 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 
 Battleship and Pool are preview cards and are excluded. This count is based on source and CI, not device playtesting. Hexa Ring Sort generated-level solvability still needs dedicated verification.
 
+## Candy Match 3 addition — validation pending
+- Game source commit: `19eb4d159d209c6f1ce6c766b18cb76150112775` — added `mobile/lib/games/candy_match3_game.dart`.
+- Home/library integration commit: `af7df07a9433686c3bd1e376eb47afe3434259fd` — changed `mobile/lib/main.dart` to add the game card and route.
+- Callback syntax fix commit: `6539d3466f2a054c4f842f39a07737c365c77104` — corrected state update callbacks in `mobile/lib/games/candy_match3_game.dart`.
+- Widget tests commit: `ca842fd9bcdeec67abbd82a278ff1648cf062e65` — added `mobile/test/candy_match3_game_test.dart` for the board HUD, Back/levels/restart controls, power-up controls, and level-map/difficulty UI.
+- Implemented locally in source: 7×7 match-3 grid, adjacent-swap validation, horizontal/vertical match detection, cascading gravity/refill, score/move/goal loop, Easy/Medium/Hard, 50 level slots with per-difficulty unlock progression, hammer, shuffle, color bomb, restart, visible Back, and result dialog. Level progress is currently in-memory only and does not persist across app launches.
+- Validation actually run in this environment: repository/file inspection only. Flutter/Dart tests and analyzer have NOT been run here. Wait for GitHub Actions on the latest main commit before counting this as a verified playable game. Do not count Candy Match 3 in the playable total yet.
+- Known gameplay caveat to check in CI/review: power-ups consume a move; ensure no analyzer/test failures and verify generated board always has a valid move. No device or Android build run.
+
 ## Latest code change
 - Commit: `45a9788a1efccf38af20c548ae2cf0c6c91bbd49`
 - Files: `mobile/lib/games/connect_four_game.dart`, `mobile/test/connect_four_logic_test.dart`.
@@ -41,10 +50,11 @@ Battleship and Pool are preview cards and are excluded. This count is based on s
 - Full source, asset, and test migration from the reference repository remains incomplete. The server's legacy Fruit Duel handler is not a Fruit Cut client.
 
 ## Blockers and next work
-1. Complete the Flutter Socket.IO connection and guest handshake; wire room creation/joining, readiness, server-owned turns/scores/timers, and safe Back/Android Back handling.
-2. Finish CI for `45a9788a1efccf38af20c548ae2cf0c6c91bbd49`, fix failures, and record the final result.
-3. Migrate remaining reference Flutter assets, source, and tests in small validated batches.
-4. Verify Hexa Ring Sort solvability and add tests for more local games.
-5. Verify Android release artifacts and deployment only when those steps actually run.
+1. Validate Candy Match 3 with CI; fix any compile/analyzer/widget-test failures and verify its board generation and power-up edge cases.
+2. Complete the Flutter Socket.IO connection and guest handshake; wire room creation/joining, readiness, server-owned turns/scores/timers, and safe Back/Android Back handling.
+3. Finish CI for `45a9788a1efccf38af20c548ae2cf0c6c91bbd49`, fix failures, and record the final result.
+4. Migrate remaining reference Flutter assets, source, and tests in small validated batches.
+5. Verify Hexa Ring Sort solvability and add tests for more local games.
+6. Verify Android release artifacts and deployment only when those steps actually run.
 
 The 50-playable-game target for 2026-10-15 17:00 is not currently realistic. Prioritize verified functionality over inflating the count.
