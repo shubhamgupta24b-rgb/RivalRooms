@@ -16,7 +16,6 @@ class _PoolBall {
 }
 
 class _PoolGameState extends State<PoolGame> {
-  static const _felt = Color(0xFF28684E);
   static const _radius = 0.018;
   final List<_PoolBall> _balls = [];
   final List<int> _scores = [0, 0];
@@ -37,7 +36,7 @@ class _PoolGameState extends State<PoolGame> {
     _scores.setAll(0, [0, 0]);
     _player = 0; _remaining = 15; _moving = false; _gameOver = false; _aimPoint = null;
     _balls.add(_PoolBall(.23, .5, Colors.white, cue: true));
-    const colors = [Color(0xFFF4C542), Color(0xFF2D68C4), Color(0xFFD94343), Color(0xFF7D4AB5), Color(0xFFF28B36), Color(0xFF278F73), Color(0xFF4D3430), Color(0xFF202020), Color(0xFFE7C94A), Color(0xFF5A8AD8), Color(0xFFEB6C73), Color(0xFFB184D4), Color(0xFFFFB16A), Color(0xFF66B7A2), Color(0xFF6B5149));
+    const colors = [Color(0xFFF4C542), Color(0xFF2D68C4), Color(0xFFD94343), Color(0xFF7D4AB5), Color(0xFFF28B36), Color(0xFF278F73), Color(0xFF4D3430), Color(0xFF202020), Color(0xFFE7C94A), Color(0xFF5A8AD8), Color(0xFFEB6C73), Color(0xFFB184D4), Color(0xFFFFB16A), Color(0xFF66B7A2), Color(0xFF6B5149)];
     var k = 0;
     for (var col = 0; col < 5; col++) {
       for (var row = 0; row <= col; row++) {
