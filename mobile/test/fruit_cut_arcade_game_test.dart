@@ -4,8 +4,8 @@ import 'package:rivalrooms/games/fruit_cut_arcade_game.dart';
 
 void main() {
   testWidgets('Fruit Cut Arcade shows the slicing arena and power-ups', (tester) async {
-    await tester.view.setPhysicalSize(const Size(430, 900));
-    await tester.view.setDevicePixelRatio(1);
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
