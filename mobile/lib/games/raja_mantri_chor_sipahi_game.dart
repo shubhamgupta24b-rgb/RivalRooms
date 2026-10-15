@@ -105,11 +105,11 @@ class _RajaMantriChorSipahiGameState extends State<RajaMantriChorSipahiGame> {
           if (_revealed) FilledButton(onPressed: _hideAndPass, style: FilledButton.styleFrom(backgroundColor: _green, minimumSize: const Size.fromHeight(50)), child: Text(_revealIndex == 3 ? 'Everyone has seen their role' : 'Hide role & pass to Player ' + (_revealIndex + 2).toString())),
         ] else if (_guessing && !_roundComplete) ...[
           Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Sipahi, identify the Chor', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
+            Text('Sipahi is Player ' + (_roles.indexOf(3) + 1).toString() + ' — identify the Chor', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
             const SizedBox(height: 8),
             const Text('Choose the player you believe is the Chor. Roles are revealed after your guess.'),
             const SizedBox(height: 14),
-            for (var i = 0; i < 4; i++) Padding(padding: const EdgeInsets.only(bottom: 8), child: OutlinedButton.icon(onPressed: () => _guess(i), icon: const Icon(Icons.person_outline_rounded), label: Text('Player ' + (i + 1).toString()), style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)))),
+            for (var i = 0; i < 4; i++) if (i != _roles.indexOf(3)) Padding(padding: const EdgeInsets.only(bottom: 8), child: OutlinedButton.icon(onPressed: () => _guess(i), icon: const Icon(Icons.person_outline_rounded), label: Text('Player ' + (i + 1).toString()), style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(48)))),
           ])),
         ] else ...[
           Container(padding: const EdgeInsets.all(18), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(22)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
