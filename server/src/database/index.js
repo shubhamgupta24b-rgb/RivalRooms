@@ -1,9 +1,21 @@
 const config = require('../config');
 let User = null;
+let dbStatus = 'disabled';
+function getDbStatus() { return dbStatus; }
 async function connectDb() {
-  if (!config.mongoUri) { console.log('[db] MONGO_URI not set, profiles disabled'); return; }
+  if (!config.mongoUri) {
+    dbStatus = 'disabled';
+    console.log('[db] MONGO_URI not set, profiles disabled');
+    return;
+  }
   const mongoose = require('mongoose');
-  await mongoose.connect(config.mongoUri);
+  try {
+    await mongoose.connect(config.mongoUri);
+  } catch (error) {
+    dbStatus = 'error';
+    console.error('[db] connection failed', error.message);
+    throw error;
+  }
   const stats = () => ({ played: { type: Number, default: 0 }, won: { type: Number, default: 0 }, best: { type: Number, default: 0 } });
   const games = ['guess_person', 'crush_it', 'basketball_hoops', 'fruit_duel', 'memory', 'paint_fight'];
   User = mongoose.models.User || mongoose.model('User', new mongoose.Schema({
@@ -11,6 +23,7 @@ async function connectDb() {
     gamesPlayed: { type: Number, default: 0 }, gamesWon: { type: Number, default: 0 },
     stats: Object.fromEntries(games.map(g => [g, stats()])),
   }, { timestamps: { createdAt: 'createdAt', updatedAt: false } }));
+  dbStatus = 'connected';
   console.log('[db] connected');
 }
 async function upsertUser({ userId, username, avatar }) {
@@ -47,4 +60,4 @@ async function leaderboard(limit = 20) {
   }));
 }
 
-module.exports = { connectDb, upsertUser, recordMatch, leaderboard };
+module.exports = { connectDb, upsertUser, recordMatch, leaderboard, getDbStatus };

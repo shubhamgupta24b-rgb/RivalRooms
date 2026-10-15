@@ -1,14 +1,17 @@
-# One-click hosting on Render (render.com > New > Blueprint > pick this repo).
-# The server then runs at https://<name>.onrender.com; enter that in the app under Home > Server.
+# Render Blueprint: New > Blueprint > this repository.
+# Native Node web service. Root directory is server/. Docker is optional and not required.
 services:
   - type: web
     name: rivalrooms
-    runtime: docker
+    runtime: node
     rootDir: server
-    dockerfilePath: ./Dockerfile
+    buildCommand: npm ci
+    startCommand: npm start
     plan: free
     healthCheckPath: /health
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: AUTH_MODE
         value: dev
       # Guest logins on a public server: fine for playing with friends, not for a store release.

@@ -36,6 +36,6 @@ The server listens on port 3000 by default. Configure environment variables usin
 
 ## Current implementation status
 
-The Flutter UI is an initial scaffold: Home / Play online / All games navigation, Settings, and a playable local Memory Match prototype are present. Other game tiles are previews. The server source has been partially migrated, but the Flutter client is not yet connected to it. Online room actions are placeholders until socket integration is completed.
+See [docs/RIVALROOMS_UI_UX_TRACKER.md](docs/RIVALROOMS_UI_UX_TRACKER.md) for the verified inventory. The Flutter app has local play for the games routed from the home screen. The Node server can create rooms and run its own game protocols, but the Flutter client is not connected to Socket.IO yet. Do not treat a home-screen card as online multiplayer.
 
-**Not release-ready:** Flutter analysis/tests, server tests, Android build, two-device multiplayer validation, and deployment have not yet been verified. The previous `Two-player-online` repository is a read-only reference and must remain unchanged.
+The previous `Two-player-online` repository is a read-only reference and must remain unchanged.
