@@ -14,7 +14,8 @@ Memory Match is the only online game. Details and the game table are in [RIVALRO
 - `npm run smoke -- http://127.0.0.1:3010`: `SMOKE OK` in 628ms. Health was `{"ok":true,"app":"rivalrooms","db":"disabled","auth":"dev"}`.
 - Render is not deployed. `render.yaml` is a free Node service, root `server`, build `npm ci`, start `npm start`, `AUTH_MODE=guest`. Required dashboard secrets: `GUEST_TOKEN_SECRET` (at least 16 random characters) and `PRIVACY_CONTACT`. Do not set `ALLOW_DEV_AUTH`.
 - Rooms are in memory. A restart clears them. No Redis.
-- Local debug APK rebuilt after the Socket.IO client was added: `mobile/build/app/outputs/flutter-apk/app-debug.apk` (168,621,002 bytes). It is gitignored. A GitHub artifact exists only after the Android workflow is observed.
+- Local debug APK rebuilt after the Socket.IO client was added: `mobile/build/app/outputs/flutter-apk/app-debug.apk` (168,621,002 bytes). It is gitignored.
+- GitHub run on `8f31f83` failed `flutter analyze` because `test/online_memory_client_test.dart` imported `dart:async` unnecessarily: [CI](https://github.com/shubhamgupta24b-rgb/RivalRooms/actions/runs/38769259279) and [Build Android APK](https://github.com/shubhamgupta24b-rgb/RivalRooms/actions/runs/38769258925). Server tests in that CI run passed. Commit `004c3a1` removes the import. That follow-up run was not re-checked from this session.
 
 ## Current verified status — 2026-10-15
 
