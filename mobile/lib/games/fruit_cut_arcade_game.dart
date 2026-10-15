@@ -159,8 +159,49 @@ class _FruitCutArcadeGameState extends State<FruitCutArcadeGame> with WidgetsBin
       ),
     );
   }
-  Widget _stat(String l,String v,{VoidCallback? tap})=>Expanded(child:Material(color:Colors.white,borderRadius:BorderRadius.circular(12),child:InkWell(onTap:tap,borderRadius:BorderRadius.circular(12),child:Padding(padding:const EdgeInsets.symmetric(vertical:8,horizontal:4),child:Column(children:[Text(l,style:const TextStyle(fontSize:9,color:Color(0xFF777A70),fontWeight:FontWeight.w800)),const SizedBox(height:3),Text(v,maxLines:1,overflow:TextOverflow.ellipsis,style:const TextStyle(fontWeight:FontWeight.w900,fontSize:12,color:Color(0xFF202520)))])))));
-  Widget _power(String icon,String label,int count,bool disabled,VoidCallback tap)=>Expanded(child:FilledButton.tonal(onPressed:disabled?null:tap,style:FilledButton.styleFrom(padding:const EdgeInsets.symmetric(vertical:7),backgroundColor:const Color(0xFFFFE7A4),foregroundColor:const Color(0xFF26143B),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(13))),child:Column(children:[Text(icon,style:const TextStyle(fontSize:21)),Text(label,style:const TextStyle(fontSize:11,fontWeight:FontWeight.w800)),Text(count.toString()+' left',style:const TextStyle(fontSize:10))])));
+  Widget _stat(String label, String value, {VoidCallback? tap}) {
+    return Expanded(
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: tap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+            child: Column(
+              children: [
+                Text(label, style: const TextStyle(fontSize: 9, color: Color(0xFF777A70), fontWeight: FontWeight.w800)),
+                const SizedBox(height: 3),
+                Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12, color: Color(0xFF202520))),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _power(String icon, String label, int count, bool disabled, VoidCallback tap) {
+    return Expanded(
+      child: FilledButton.tonal(
+        onPressed: disabled ? null : tap,
+        style: FilledButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 7),
+          backgroundColor: const Color(0xFFFFE7A4),
+          foregroundColor: const Color(0xFF26143B),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+        ),
+        child: Column(
+          children: [
+            Text(icon, style: const TextStyle(fontSize: 21)),
+            Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800)),
+            Text('$count left', style: const TextStyle(fontSize: 10)),
+          ],
+        ),
+      ),
+    );
+  }
 }
 class _FruitArenaPainter extends CustomPainter {
   _FruitArenaPainter({required this.fruits,required this.particles,required this.trail,required this.frozen,required this.shield});
