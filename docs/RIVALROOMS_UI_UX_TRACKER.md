@@ -7,8 +7,9 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 ## Latest verified progress — 2026-10-15
 - CI run `38718240499` passed on commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`: Flutter analyze, Flutter tests, and server tests all succeeded. Candy Match 3 and Fruit Cut syntax/test issues are resolved at that commit.
 - Pool is implemented as a local pass-and-play table game in `mobile/lib/games/pool_game.dart`, with score/turn tracking, drag-to-aim shots, ball movement/collisions, pockets, restart and Back controls. Home-card routing and a widget test are included. CI run `38719377649` passed: Flutter analysis, Flutter tests, and server tests succeeded. Pool is code/CI-verified but still needs device playtesting.
-- Candy Match 3 is also code/CI-verified at commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`; neither new game has been device-playtested.
-- Keep Battleship as the next preview-card game to implement. Online multiplayer is still not wired to these local game screens.
+- Candy Match 3 is code/CI-verified at commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`.
+- Battleship is now implemented in `mobile/lib/games/battleship_game.dart`: randomized starting player, hidden-fleet handoff curtain between turns, generated non-overlapping fleets, hit/miss tracking, sunk-ship detection, restart/rematch and Back controls. Home-card routing and a widget test are included. CI run `38719682315` passed Flutter analysis, Flutter tests and server tests.
+- Pool and Battleship are local pass-and-play implementations; neither has been device-playtested, and neither is online-synchronized. Online multiplayer remains a separate unfinished integration.
 
 ## Boundaries
 - Write only to RivalRooms; keep Two-player-online read-only.
@@ -16,7 +17,7 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 - Count a game only when its core loop works; preview cards do not count.
 - Keep visible Back navigation and explicit confirmation before leaving an active online match.
 
-## Local playable games — 10 code/CI-verified, not device-playtested
+## Local playable games — 11 code/CI-verified, not device-playtested
 1. Memory Match
 2. Basketball Hoops
 3. Fruit Cut
@@ -27,8 +28,9 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 8. Maths Duel
 9. Candy Match 3
 10. Pool
+11. Battleship
 
-Battleship remains a preview card. This count is based on source and CI, not device playtesting. Hexa Ring Sort generated-level solvability still needs dedicated verification.
+This count is based on source and CI, not device playtesting. Hexa Ring Sort generated-level solvability still needs dedicated verification.
 
 ## Fruit Cut Arcade upgrade — validation pending
 - Arcade source commit: `64eb5302f839b9ee496d56aad0b005df6e1e04c2` — added `mobile/lib/games/fruit_cut_arcade_game.dart`.
