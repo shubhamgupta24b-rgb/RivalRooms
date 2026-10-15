@@ -34,7 +34,7 @@ Every iteration must:
 | Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Not started | Not run | Four explicit entry modes; compact game previews; Privacy Policy stays in Settings |
 | Basketball Hoops | Not started | Not started | Not run | Preserve shot action, score, round phase, timer and server synchronization |
 | Fruit Cut | Not started | Not started | Not run | Preserve slash action, fruit ID/lane, score/phase/timer and server synchronization |
-| Settings | Not started | Not started | Not run | Privacy Policy lives here, not on Home |
+| Settings | Not started | Not started | Not run | Privacy Policy lives here, not on Home |\n| In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Not started | Not run | Visible 48 dp back control; confirm leaving active online matches; system Back matches visible Back; preserve room/game state |
 | Game-selection/detail screens beyond the above | Not started | Not started | Not run | Add each screen/game to this table before working on it to prevent repeats |
 
 ## This iteration
