@@ -35,11 +35,11 @@ Every iteration must:
 | Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Starter implementation in `mobile/lib/main.dart` | CI rerun pending after widget-tree fix | Home, Play online, All games navigation; clean earthy palette; Privacy Policy is only referenced in Settings |
 | Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Local tap-to-shoot prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | Primary Shoot action; preserve timing, score, phase and server updates |
 | Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Local timed tap-to-slice prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
-| Settings | Not started | Starter implementation in `mobile/lib/main.dart` | Not run | Settings entry exists; privacy policy placeholder remains inside Settings |
+| Suika Pop | Added from the supplied HTML game's mechanics and art direction | Native Flutter fruit-merge game in `mobile/lib/main.dart`: 11 fruit tiers, drop/aim controls, merge scoring, next-fruit preview, overflow game-over, shake/pop/boost power-ups, reset and Back | CI pending for commit `3e89504` |\n| Settings | Not started | Starter implementation in `mobile/lib/main.dart` | Not run | Settings entry exists; privacy policy placeholder remains inside Settings |
 | In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Basic visible Back on prototype game screens | Not run | Active online match confirmation and Android Back policy are not implemented yet |
 | Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
 | Maths Duel | `docs/design/MATHS_DUEL_SPEC.md` | Not started | Not run | One-question focus; preserve answer validation and timer |
-| Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Single-question clue round with four choices, answer feedback, and Next person to start a fresh round | CI pending for commit `e5aea38` | Progressive hints; preserve hint order and scoring |
+| Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Single-question clue round with four choices, answer feedback, and Next person to start a fresh round | CI pending for latest game commit | Progressive hints; preserve hint order and scoring |
 | Pool | `docs/design/POOL_SPEC.md` | Not started | Not run | Separate aiming from shooting; preserve physics |
 | Connect Four | `docs/design/CONNECT_FOUR_SPEC.md` | Not started | Not run | Legal-move preview; preserve win detection and turns |
 | Battleship | `docs/design/BATTLESHIP_SPEC.md` | Not started | Not run | Separate targeting states; preserve hidden information |
@@ -63,7 +63,7 @@ Every iteration must:
 - **Code changes:** specification only; no Flutter source is present to implement it yet.
 - **Tests/build/deployment:** not run.
 
-## Implementation update — Guess the Person
+## Implementation update — Suika Pop\n- **Source:** user-provided `gemini-code-1792043545598.html`, a fruit-merging game with 11 tiers, aim/drop controls, merging, score/best score, overflow game-over, and three power-ups.\n- **Code changes:** added a native Flutter implementation and home/library game card; no WebView dependency required. Includes fruit tier evolution, next-fruit preview, score, aim guide, tap-to-drop, physics/collisions/merging, shake jar, berry pop, evolution boost, restart, game-over overlay, and visible Back.\n- **Commits:** `788be4b2011d5a08db432772f259169ea7c566fc` (implementation), `3e89504fe9a106442701752b47e4003e7de4ce5a` (layout/type fix).\n- **Validation:** CI has not yet completed for the new implementation; do not count as verified until Flutter analysis/tests pass.\n\n## Implementation update — Guess the Person
 - **Principle:** one clue and one decision per round, with immediate, unambiguous feedback.
 - **Code changes:** replaced the multi-question sequence with a single-question round, four answer choices, correct/incorrect feedback, a Next person action that starts a fresh question, and visible Back.
 - **Commit:** `e5aea3849ef0dacec45e62b9a558f94046294949`.
@@ -86,7 +86,7 @@ Every iteration must:
 - **Tests/build/deployment:** not run.
 
 ## Next work
-1. Verify CI for the Guess the Person implementation and correct any analyzer/test failures.
+1. Verify CI for the latest Suika Pop and Guess the Person commits; correct any analyzer/test failures.
 2. Migrate the remaining existing Flutter source, assets, and tests from the read-only reference repository.
 3. Connect the Flutter client to the migrated Socket.IO room server; implement active-match exit confirmation and Android Back handling.
 4. Replace remaining placeholder game cards with real core loops, working in small batches and counting only tested playable games.
