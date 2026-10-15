@@ -15,4 +15,5 @@ test('health reports a ready server when the database is not required', async (t
   assert.strictEqual(body.app, 'rivalrooms');
   assert.strictEqual(body.db, getDbStatus());
   assert.notStrictEqual(body.db, 'error');
+  assert.strictEqual(body.auth, 'dev');
 });

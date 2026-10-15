@@ -4,6 +4,18 @@ Last updated: 2026-10-15 (local repair and verification)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md). Older notes below this section are historical and are not the current verification record.
 
+## Online multiplayer — 2026-10-15
+
+Memory Match is the only online game. Details and the game table are in [RIVALROOMS_ONLINE_MULTIPLAYER.md](RIVALROOMS_ONLINE_MULTIPLAYER.md).
+
+- `npm test`: 98 passed, 0 failed. That includes two Socket.IO clients finishing Memory Match, guest-token rejection, and `/health` returning 503 until `GUEST_TOKEN_SECRET` is set in guest mode.
+- `flutter analyze`: no issues found.
+- `flutter test`: 39 passed. Two `OnlineSession` clients finished Memory Match against a local server. The Play online tab shows a connection error instead of opening the local game when the address is empty.
+- `npm run smoke -- http://127.0.0.1:3010`: `SMOKE OK` in 628ms. Health was `{"ok":true,"app":"rivalrooms","db":"disabled","auth":"dev"}`.
+- Render is not deployed. `render.yaml` is a free Node service, root `server`, build `npm ci`, start `npm start`, `AUTH_MODE=guest`. Required dashboard secrets: `GUEST_TOKEN_SECRET` (at least 16 random characters) and `PRIVACY_CONTACT`. Do not set `ALLOW_DEV_AUTH`.
+- Rooms are in memory. A restart clears them. No Redis.
+- Local debug APK rebuilt after the Socket.IO client was added: `mobile/build/app/outputs/flutter-apk/app-debug.apk` (168,621,002 bytes). It is gitignored. A GitHub artifact exists only after the Android workflow is observed.
+
 ## Current verified status — 2026-10-15
 
 ### Commands actually run

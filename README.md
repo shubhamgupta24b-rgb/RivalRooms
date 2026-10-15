@@ -36,6 +36,6 @@ The server listens on port 3000 by default. Configure environment variables usin
 
 ## Current implementation status
 
-See [docs/RIVALROOMS_UI_UX_TRACKER.md](docs/RIVALROOMS_UI_UX_TRACKER.md) for the verified inventory. The Flutter app has local play for the games routed from the home screen. The Node server can create rooms and run its own game protocols, but the Flutter client is not connected to Socket.IO yet. Do not treat a home-screen card as online multiplayer.
+See [docs/RIVALROOMS_UI_UX_TRACKER.md](docs/RIVALROOMS_UI_UX_TRACKER.md) for the verified inventory and [docs/RIVALROOMS_ONLINE_MULTIPLAYER.md](docs/RIVALROOMS_ONLINE_MULTIPLAYER.md) for rooms. Play online is Memory Match through Socket.IO. The other home-screen games stay on the device.
 
 The previous `Two-player-online` repository is a read-only reference and must remain unchanged.

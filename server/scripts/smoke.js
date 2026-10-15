@@ -6,11 +6,21 @@ const { io } = require('socket.io-client');
 
 const url = (process.argv[2] || 'http://localhost:3000').replace(/\/$/, '');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-const client = (uid, name) => new Promise((res, rej) => {
-  const s = io(url, { transports: ['websocket'], auth: { token: `dev:${uid}:${name}` }, reconnection: false, timeout: 90000 });
+const client = (token, name) => new Promise((res, rej) => {
+  const s = io(url, { transports: ['websocket'], auth: { token }, reconnection: false, timeout: 90000 });
   s.on('connect', () => res(s));
   s.on('connect_error', e => rej(new Error(`${name} could not connect: ${e.message}`)));
 });
+async function login(authMode, name, fallbackUid) {
+  if (authMode === 'guest') {
+    const response = await fetch(`${url}/auth/guest`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ name }), signal: AbortSignal.timeout(90000) });
+    const body = await response.json();
+    if (!response.ok || !body.token) throw new Error(`guest sign-in failed: ${JSON.stringify(body)}`);
+    return body.token;
+  }
+  if (authMode === 'dev') return `dev:${fallbackUid}:${name}`;
+  throw new Error(`smoke cannot sign in when auth=${authMode}`);
+}
 const req = (s, ev, p = {}) => new Promise(r => s.emit(ev, p, r));
 const must = (r, what) => {
   if (!r || !r.ok) throw new Error(`${what}: ${JSON.stringify(r)}`);
@@ -22,8 +32,9 @@ const must = (r, what) => {
   const ms = () => `${Date.now() - t0}ms`;
   const health = await fetch(`${url}/health`, { signal: AbortSignal.timeout(90000) }).then(r => r.text());
   console.log(`health ${health} (${ms()})`);
+  const healthAuth = JSON.parse(health).auth;
   const id = Date.now().toString(36);
-  const a = await client(`smokeA${id}`, 'Host'), b = await client(`smokeB${id}`, 'Guest');
+  const a = await client(await login(healthAuth, 'Host', `smokeA${id}`), 'Host'), b = await client(await login(healthAuth, 'Guest', `smokeB${id}`), 'Guest');
   console.log(`two players connected (${ms()})`);
 
   let states = 0, finished = null;

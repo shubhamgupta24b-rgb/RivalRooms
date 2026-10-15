@@ -15,6 +15,7 @@ import 'games/chicken_jump_game.dart';
 import 'games/carrom_game.dart';
 import 'games/bike_racing_game.dart';
 import 'games/raja_mantri_chor_sipahi_game.dart';
+import 'online/online_pages.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -189,25 +190,12 @@ class _HomeScreenState extends State<HomeScreen> {
  );
  Widget _sectionTitle(String title,String? action,VoidCallback? onTap)=>Row(children:[Expanded(child:Text(title,style:const TextStyle(fontWeight:FontWeight.w900,fontSize:19,letterSpacing:-.4,color:ink))),if(action!=null)TextButton(onPressed:onTap,child:Text(action))]);
  Widget _modeTile(String title,String subtitle,IconData icon,Color color,VoidCallback tap)=>InkWell(onTap:tap,borderRadius:BorderRadius.circular(18),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Icon(icon,color:color,size:27),const SizedBox(height:14),Text(title,style:const TextStyle(fontWeight:FontWeight.w800,fontSize:16)),const SizedBox(height:3),Text(subtitle,style:const TextStyle(color:muted,fontSize:11))])));
- Widget _online()=>ListView(padding:const EdgeInsets.all(20),children:[
-  const Text('Play online',style:TextStyle(fontSize:31,fontWeight:FontWeight.w900,letterSpacing:-1)),
-  const SizedBox(height:6),const Text('Bring your friends into the same room.',style:TextStyle(color:muted)),
-  const SizedBox(height:22),const _RoomAction(icon:Icons.add_circle_outline,title:'Create a room',detail:'Start a private match',message:'Room creation needs the multiplayer server connection.'),
-  const SizedBox(height:12),const _RoomAction(icon:Icons.login_rounded,title:'Join with a code',detail:'Enter a friend’s room code',message:'Room joining needs the multiplayer server connection.'),
-  const SizedBox(height:12),const _RoomAction(icon:Icons.bolt_rounded,title:'Quick Play',detail:'Find a game together',message:'Quick Play will be connected when the server is migrated.'),
-  const SizedBox(height:20),const Text('Online rooms are not connected in this first Flutter scaffold yet.',style:TextStyle(color:muted,fontSize:12)),
- ]);
+ Widget _online()=>const OnlinePlayPage();
  Widget _library()=>ListView(padding:const EdgeInsets.fromLTRB(20,10,20,24),children:[
   const Text('All games',style:TextStyle(fontSize:31,fontWeight:FontWeight.w900,letterSpacing:-1)),
   const SizedBox(height:6),const Text('Choose your next challenge.',style:TextStyle(color:muted)),const SizedBox(height:18),
   for(final g in games) Padding(padding:const EdgeInsets.only(bottom:10),child:InkWell(onTap:()=>openGame(g),borderRadius:BorderRadius.circular(17),child:Container(padding:const EdgeInsets.all(13),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(17)),child:Row(children:[Container(width:54,height:54,decoration:BoxDecoration(color:g.color,borderRadius:BorderRadius.circular(14)),child:Center(child:Text(g.emoji,style:const TextStyle(fontSize:28)))),const SizedBox(width:13),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(g.title,style:const TextStyle(fontWeight:FontWeight.w800,fontSize:15)),const SizedBox(height:3),Text(g.subtitle,style:const TextStyle(color:muted,fontSize:12))])),const Icon(Icons.chevron_right_rounded,color:muted)])))),
  ]);
-}
-
-class _RoomAction extends StatelessWidget {
- final IconData icon; final String title,detail,message;
- const _RoomAction({required this.icon,required this.title,required this.detail,required this.message});
- @override Widget build(BuildContext context)=>InkWell(onTap:()=>showDialog<void>(context:context,builder:(c)=>AlertDialog(title:Text(title),content:Text(message),actions:[TextButton(onPressed:()=>Navigator.pop(c),child:const Text('Got it'))])),borderRadius:BorderRadius.circular(18),child:Container(padding:const EdgeInsets.all(17),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),child:Row(children:[Icon(icon,color:green,size:28),const SizedBox(width:14),Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(title,style:const TextStyle(fontWeight:FontWeight.w800,fontSize:16)),const SizedBox(height:4),Text(detail,style:const TextStyle(color:muted,fontSize:12))])),const Icon(Icons.chevron_right_rounded,color:muted)])));
 }
 
 class GamePreview extends StatelessWidget {
