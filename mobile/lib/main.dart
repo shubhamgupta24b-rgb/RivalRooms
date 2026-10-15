@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
   children: [
     const Text('GOOD GAMES. GREAT COMPANY.', style: TextStyle(fontSize: 11, letterSpacing: 1.5, fontWeight: FontWeight.w800, color: muted)),
     const SizedBox(height: 8),
-    const Text('Who’s your\\nnext rival?', style: TextStyle(fontSize: 38, height: 1.05, fontWeight: FontWeight.w900, letterSpacing: -1.7, color: ink)),
+    const Text('Who’s your\nnext rival?', style: TextStyle(fontSize: 38, height: 1.05, fontWeight: FontWeight.w900, letterSpacing: -1.7, color: ink)),
     const SizedBox(height: 18),
     Container(
       padding: const EdgeInsets.all(20),
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text('MAKE IT A MATCH', style: TextStyle(color: Color(0xFFD8E3D1), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.4)),
           SizedBox(height: 8),
-          Text('Play with friends\\nwherever they are.', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 21, height: 1.2)),
+          Text('Play with friends\nwherever they are.', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 21, height: 1.2)),
           SizedBox(height: 15),
         ])),
         Container(width: 74, height: 84, decoration: BoxDecoration(color: Color(0xFF5D805F), borderRadius: BorderRadius.circular(20)),
@@ -120,9 +120,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Align(alignment: Alignment.topRight, child: Text(g.emoji, style: const TextStyle(fontSize: 39))),
                   const Spacer(),
-                  Text(g.title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: ink)),
+                  Text(g.title, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, height: 1.1, color: ink)),
                   const SizedBox(height: 4),
-                  Text(g.subtitle, style: const TextStyle(fontSize: 11, color: ink)),
+                  Text(g.subtitle, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 11, color: ink)),
                 ]),
               ),
             ),
