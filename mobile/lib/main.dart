@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'games/hexa_ring_sort_game.dart';
+import 'games/memory_match_logic.dart';
+import 'leave_game.dart';
 import 'games/maths_duel_game.dart';
 import 'games/connect_four_game.dart';
 import 'games/candy_match3_game.dart';
@@ -215,17 +217,31 @@ class GamePreview extends StatelessWidget {
 
 class MemoryGame extends StatefulWidget { const MemoryGame({super.key}); @override State<MemoryGame> createState()=>_MemoryGameState(); }
 class _MemoryGameState extends State<MemoryGame> {
- late List<String> cards; final Set<int> open={}; final Set<int> matched={}; int moves=0; bool busy=false;
- @override void initState(){super.initState();_reset();}
+ late MemoryMatchLogic board;
  int cardCount=24;
  static const symbols=['🍋','🍒','🍇','🍉','🥝','🍊','🍓','🍍','🍑','🍈','🍏','🥥','🫐','🍐','🍌','🍅'];
- void _reset(){final chosen=symbols.take(cardCount~/2).toList();cards=[...chosen,...chosen]..shuffle(Random());open.clear();matched.clear();moves=0;busy=false;}
+ @override void initState(){super.initState();_reset();}
+ void _reset(){final chosen=symbols.take(cardCount~/2).toList();board=MemoryMatchLogic([...chosen,...chosen]..shuffle(Random()));}
  Future<void> _tap(int i) async {
-  if(busy||matched.contains(i)||open.contains(i))return;
-  setState(()=>open.add(i));
-  if(open.length==2){setState(()=>moves++);final pair=open.toList();if(cards[pair[0]]==cards[pair[1]]){setState(()=>matched.addAll(pair));await Future<void>.delayed(const Duration(milliseconds:250));if(matched.length==cards.length&&mounted){showDialog<void>(context:context,builder:(c)=>AlertDialog(title:const Text('Perfect match!'),content:Text('You finished in $moves moves.'),actions:[TextButton(onPressed:(){Navigator.pop(c);setState(_reset);},child:const Text('Play again'))]));}}else{busy=true;await Future<void>.delayed(const Duration(milliseconds:700));if(mounted)setState(()=>open.clear());busy=false;}}
+  final result=board.tap(i);
+  if(result=='ignore')return;
+  setState((){});
+  if(result=='mismatch'){
+    await Future<void>.delayed(const Duration(milliseconds:700));
+    if(!mounted)return;
+    setState(board.hideMismatch);
+  } else if(result=='match'){
+    await Future<void>.delayed(const Duration(milliseconds:250));
+  } else if(result=='win' && mounted){
+    await Future<void>.delayed(const Duration(milliseconds:250));
+    if(!mounted)return;
+    showDialog<void>(context:context,builder:(c)=>AlertDialog(title:const Text('Perfect match!'),content:Text('You finished in ${board.moves} moves.'),actions:[TextButton(onPressed:(){Navigator.pop(c);setState(_reset);},child:const Text('Play again'))]));
+  }
  }
- @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Memory Match',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:()=>setState(_reset),icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[Row(children:[const Expanded(child:Text('Find every pair.',style:TextStyle(fontSize:25,fontWeight:FontWeight.w900))),DropdownButton<int>(value:cardCount,underline:const SizedBox.shrink(),items:const [8,12,16,20,24,28,32].map((n)=>DropdownMenuItem(value:n,child:Text('$n cards'))).toList(),onChanged:(n){if(n!=null)setState((){cardCount=n;_reset();});}),const SizedBox(width:8),Container(padding:const EdgeInsets.symmetric(horizontal:12,vertical:9),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14)),child:Text('Moves  $moves',style:const TextStyle(fontWeight:FontWeight.w800)))]),const SizedBox(height:20),Expanded(child:GridView.builder(itemCount:cards.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:4,crossAxisSpacing:9,mainAxisSpacing:9,childAspectRatio:.78),itemBuilder:(context,i){final revealed=open.contains(i)||matched.contains(i);return Semantics(button:true,label:revealed?cards[i]:'Hidden card',child:InkWell(onTap:()=>_tap(i),borderRadius:BorderRadius.circular(14),child:AnimatedContainer(duration:const Duration(milliseconds:160),decoration:BoxDecoration(color:revealed?const Color(0xFFE6E9DE):green,borderRadius:BorderRadius.circular(14),border:Border.all(color:matched.contains(i)?green:Colors.transparent,width:2)),child:Center(child:Text(revealed?cards[i]:'✦',style:TextStyle(fontSize:revealed?30:25,color:revealed?ink:Colors.white,fontWeight:FontWeight.w900))))));})),const SizedBox(height:8),Text('${matched.length~/2} of ${cards.length~/2} pairs found',style:const TextStyle(color:muted,fontWeight:FontWeight.w700)),const SizedBox(height:10)]))));
+ @override Widget build(BuildContext context){
+  final cards=board.cards; final open=board.open; final matched=board.matched; final moves=board.moves;
+  return LeaveGameScope(confirm:board.inProgress,child:Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Memory Match',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:()=>setState(_reset),icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[Row(children:[const Expanded(child:Text('Find every pair.',style:TextStyle(fontSize:25,fontWeight:FontWeight.w900))),DropdownButton<int>(value:cardCount,underline:const SizedBox.shrink(),items:const [8,12,16,20,24,28,32].map((n)=>DropdownMenuItem(value:n,child:Text('$n cards'))).toList(),onChanged:(n){if(n!=null)setState((){cardCount=n;_reset();});}),const SizedBox(width:8),Container(padding:const EdgeInsets.symmetric(horizontal:12,vertical:9),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14)),child:Text('Moves  $moves',style:const TextStyle(fontWeight:FontWeight.w800)))]),const SizedBox(height:20),Expanded(child:GridView.builder(itemCount:cards.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:4,crossAxisSpacing:9,mainAxisSpacing:9,childAspectRatio:.78),itemBuilder:(context,i){final revealed=open.contains(i)||matched.contains(i);return Semantics(button:true,label:revealed?cards[i]:'Hidden card',child:InkWell(onTap:()=>_tap(i),borderRadius:BorderRadius.circular(14),child:AnimatedContainer(duration:const Duration(milliseconds:160),decoration:BoxDecoration(color:revealed?const Color(0xFFE6E9DE):green,borderRadius:BorderRadius.circular(14),border:Border.all(color:matched.contains(i)?green:Colors.transparent,width:2)),child:Center(child:Text(revealed?cards[i]:'✦',style:TextStyle(fontSize:revealed?30:25,color:revealed?ink:Colors.white,fontWeight:FontWeight.w900))))));})),const SizedBox(height:8),Text('${matched.length~/2} of ${cards.length~/2} pairs found',style:const TextStyle(color:muted,fontWeight:FontWeight.w700)),const SizedBox(height:10)])))));
+ }
 }
 
 
@@ -253,7 +269,7 @@ class _GuessPersonGameState extends State<GuessPersonGame> {
   ({String clue, List<String> options, String answer})? get personOrNull {
     try { return person; } catch (_) { return null; }
   }
-  @override Widget build(BuildContext context) => Scaffold(
+  @override Widget build(BuildContext context) => LeaveGameScope(confirm: selected == null, child: Scaffold(
     appBar: AppBar(leading: IconButton(tooltip: 'Back', icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.maybePop(context)), title: const Text('Guess the Person', style: TextStyle(fontWeight: FontWeight.w800))),
     body: SafeArea(child: Padding(padding: const EdgeInsets.all(20), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const Text('ONE CLUE. ONE ANSWER.', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1.3)),
@@ -302,7 +318,7 @@ class _GuessPersonGameState extends State<GuessPersonGame> {
         SizedBox(width: double.infinity, child: FilledButton(onPressed: _newPerson, child: const Text('Next person'))),
       ] else
         const Spacer(),
-    ]))),
+    ])))),
   );
 }
 
@@ -397,7 +413,7 @@ class _SuikaPopGameState extends State<SuikaPopGame> with SingleTickerProviderSt
     setState(() { boosts--; currentTier++; });
   }
   @override void dispose(){_ticker.dispose();super.dispose();}
-  @override Widget build(BuildContext context)=>Scaffold(
+  @override Widget build(BuildContext context)=>LeaveGameScope(confirm:fruits.isNotEmpty&&!gameOver,child:Scaffold(
     appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Suika Pop',style:TextStyle(fontWeight:FontWeight.w900)),actions:[IconButton(tooltip:'Aim line',onPressed:()=>setState(()=>showAim=!showAim),icon:Icon(showAim?Icons.gps_fixed_rounded:Icons.gps_not_fixed_rounded)),IconButton(tooltip:'Reset',onPressed:_reset,icon:const Icon(Icons.refresh_rounded))]),
     body:SafeArea(child:LayoutBuilder(builder:(context,box){
       _width=box.maxWidth.clamp(260.0,520.0).toDouble(); _height=max(300.0,box.maxHeight-190).toDouble(); _aimX=_aimX.clamp(20,_width-20).toDouble();
@@ -428,7 +444,7 @@ class _SuikaPopGameState extends State<SuikaPopGame> with SingleTickerProviderSt
         Text('Drop matching fruits to merge them into bigger ones.',style:TextStyle(color:muted,fontSize:12)),
       ]));
     })),
-  );
+  ));
   Widget _suikaStat(String label,String value)=>Container(padding:const EdgeInsets.symmetric(horizontal:12,vertical:10),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(15)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(label,style:const TextStyle(fontSize:9,color:muted,fontWeight:FontWeight.w900,letterSpacing:1)),Text(value,style:const TextStyle(fontSize:20,fontWeight:FontWeight.w900,color:ink))]));
   Widget _powerButton(String emoji,String title,int count,VoidCallback action)=>Expanded(child:FilledButton.tonal(onPressed:count>0&&!gameOver?action:null,style:FilledButton.styleFrom(padding:const EdgeInsets.symmetric(vertical:10),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(14))),child:Column(children:[Text(emoji,style:const TextStyle(fontSize:19)),Text(title,style:const TextStyle(fontSize:10,fontWeight:FontWeight.w800)),Text('$count left',style:const TextStyle(fontSize:9))])));
 }
@@ -478,14 +494,14 @@ class _FruitCutGameState extends State<FruitCutGame> {
   void _newRound(){timer?.cancel();setState((){fruits=List.generate(12,(_)=>fruitPool[random.nextInt(fruitPool.length)]);score=0;seconds=30;running=true;finished=false;});timer=Timer.periodic(const Duration(seconds:1),(t){if(!mounted)return;if(seconds<=1){t.cancel();setState((){seconds=0;running=false;finished=true;});}else{setState(()=>seconds--);}});}
   void _slice(int i){if(!running)return;setState((){score+=10;fruits[i]=fruitPool[random.nextInt(fruitPool.length)];});}
   @override void dispose(){timer?.cancel();super.dispose();}
-  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Fruit Cut',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:_newRound,icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[
+  @override Widget build(BuildContext context)=>LeaveGameScope(confirm:running&&!finished&&score>0,child:Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Fruit Cut',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:_newRound,icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[
     Row(children:[_scorePill('SCORE',score.toString()),const Spacer(),_scorePill('TIME','${seconds}s')]),
     const SizedBox(height:14),const Align(alignment:Alignment.centerLeft,child:Text('Tap the fruit.',style:TextStyle(fontSize:27,fontWeight:FontWeight.w900,letterSpacing:-.8))),
     const Align(alignment:Alignment.centerLeft,child:Text('Quick taps. Clean cuts. Chase your best.',style:TextStyle(color:muted))),
     const SizedBox(height:18),
     Expanded(child:GridView.builder(itemCount:fruits.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:3,crossAxisSpacing:12,mainAxisSpacing:12),itemBuilder:(context,i)=>Material(color:Colors.white,borderRadius:BorderRadius.circular(24),child:InkWell(onTap:()=>_slice(i),borderRadius:BorderRadius.circular(24),child:Center(child:Text(fruits[i],style:const TextStyle(fontSize:47))))))),
     if(finished)Container(padding:const EdgeInsets.all(16),decoration:BoxDecoration(color:const Color(0xFFD4E4C8),borderRadius:BorderRadius.circular(18)),child:Row(children:[Expanded(child:Text('Time! Final score: $score',style:const TextStyle(fontWeight:FontWeight.w900))),FilledButton(onPressed:_newRound,child:const Text('Play again'))]))
-  ]))));
+  ])))));
 }
 
 Widget _scorePill(String label,String value)=>Container(padding:const EdgeInsets.symmetric(horizontal:17,vertical:11),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(15)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Text(label,style:const TextStyle(fontSize:10,color:muted,fontWeight:FontWeight.w800,letterSpacing:1)),const SizedBox(height:3),Text(value,style:const TextStyle(fontSize:20,fontWeight:FontWeight.w900))]));
@@ -500,7 +516,7 @@ class _BasketballGameState extends State<BasketballGame>{
  void _shoot(){if(!running)return;setState((){streak++;score+=streak%3==0?3:2;});}
  @override void initState(){super.initState();_start();}
  @override void dispose(){timer?.cancel();super.dispose();}
- @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Basketball Hoops',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:_start,icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[
+ @override Widget build(BuildContext context)=>LeaveGameScope(confirm:running&&!finished,child:Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Basketball Hoops',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:_start,icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[
   Row(children:[_scorePill('POINTS',score.toString()),const Spacer(),_scorePill('TIME','${seconds}s')]),
   const SizedBox(height:18),const Align(alignment:Alignment.centerLeft,child:Text('Find your rhythm.',style:TextStyle(fontSize:27,fontWeight:FontWeight.w900,letterSpacing:-.8))),
   const Align(alignment:Alignment.centerLeft,child:Text('Tap SHOOT to sink the next basket.',style:TextStyle(color:muted))),
@@ -514,5 +530,5 @@ class _BasketballGameState extends State<BasketballGame>{
   const SizedBox(height:18),
   SizedBox(width:double.infinity,height:58,child:FilledButton.icon(onPressed:running?_shoot:_start,icon:const Icon(Icons.sports_basketball_rounded),label:Text(finished?'PLAY AGAIN':'SHOOT',style:const TextStyle(fontWeight:FontWeight.w900,letterSpacing:1.3)),style:FilledButton.styleFrom(backgroundColor:coral,foregroundColor:ink,shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(17))))),
   if(finished)Padding(padding:const EdgeInsets.only(top:12),child:Text('Final score: $score',style:const TextStyle(fontWeight:FontWeight.w800))),
- ]))));
+ ])))));
 }

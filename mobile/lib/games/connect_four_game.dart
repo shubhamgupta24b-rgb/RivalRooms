@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 import 'connect_four_logic.dart';
 
 const _p1 = Color(0xFF3B6FA5);
@@ -47,7 +48,9 @@ class _ConnectFourGameState extends State<ConnectFourGame> {
             : 'PLAYER ${game.turn + 1} TO MOVE';
     final winning = game.winCells.toSet();
 
-    return Scaffold(
+    return LeaveGameScope(
+      confirm: game.moves > 0 && !game.finished,
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           tooltip: 'Back to games',
@@ -222,6 +225,7 @@ class _ConnectFourGameState extends State<ConnectFourGame> {
           ),
         ),
       ),
+    ),
     );
   }
 }

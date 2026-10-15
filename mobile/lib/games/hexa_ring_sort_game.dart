@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
+import 'hexa_ring_sort_logic.dart';
 
 class HexaRingSortGame extends StatefulWidget {
   const HexaRingSortGame({super.key});
@@ -11,48 +13,35 @@ class _HexaRingSortGameState extends State<HexaRingSortGame> {
   int difficulty = 1, level = 1, selected = -1, hints = 2;
   final Map<int,int> unlocked = {0:1,1:1,2:1};
   final List<List<List<int>>> history = [];
-  late List<List<int>> stacks;
-  int capacity = 3;
+  late HexaRingBoard board;
   bool won = false;
   String get mode => ['Easy','Medium','Hard'][difficulty];
+  List<List<int>> get stacks => board.stacks;
+  int get capacity => board.capacity;
 
   @override void initState() { super.initState(); _newLevel(); }
-  List<List<int>> _makeLevel() {
-    final rng = Random(level * 131 + difficulty * 29 + 999);
-    capacity = difficulty == 0 || (difficulty == 1 && level < 12) ? 3 : 4;
-    final colors = min(7, 4 + level ~/ 12 + difficulty);
-    final board = <List<int>>[];
-    for (var c=0;c<colors;c++) { board.add(List<int>.filled(capacity,c,growable:true)); }
-    board.add(<int>[]); board.add(<int>[]);
-    var lastFrom=-1, lastTo=-1;
-    for (var step=0;step<(20+level*3+difficulty*15)*4;step++) {
-      final moves=<List<int>>[];
-      for(var f=0;f<board.length;f++) { if(board[f].isEmpty) continue; for(var t=0;t<board.length;t++) { if(f!=t && board[t].length<capacity && !(f==lastTo && t==lastFrom)) moves.add([f,t]); } }
-      if(moves.isEmpty) break;
-      final m=moves[rng.nextInt(moves.length)]; board[m[1]].add(board[m[0]].removeLast()); lastFrom=m[0]; lastTo=m[1];
-    }
-    return board;
+  void _newLevel() {
+    final generated = HexaLevel.generate(level, difficulty);
+    board = HexaRingBoard(generated.stacks.map((stack) => List<int>.from(stack)).toList(), generated.capacity);
+    selected=-1; hints=2; won=false; history.clear();
   }
-  void _newLevel() { stacks=_makeLevel(); selected=-1; hints=2; won=false; history.clear(); }
-  bool _solved(List<int> s)=>s.length==capacity && s.every((v)=>v==s.first);
-  bool get _complete=>stacks.every((s)=>s.isEmpty || _solved(s));
-  bool _can(int f,int t)=>f!=t && stacks[f].isNotEmpty && stacks[t].length<capacity && (stacks[t].isEmpty || stacks[t].last==stacks[f].last) && !_solved(stacks[f]) && !_solved(stacks[t]);
+  bool get _complete => board.complete;
+  bool _can(int f,int t) => board.canMove(f, t);
   void _tap(int i) {
     if(won)return;
     setState(() {
-      if(selected<0) { if(stacks[i].isNotEmpty && !_solved(stacks[i])) selected=i; return; }
+      if(selected<0) { if(stacks[i].isNotEmpty && !HexaRingBoard.solvedStack(stacks[i], capacity)) selected=i; return; }
       if(selected==i){selected=-1;return;}
       if(!_can(selected,i)){selected=stacks[i].isEmpty?-1:i;return;}
-      history.add(stacks.map((s)=>List<int>.from(s)).toList());
-      final color=stacks[selected].last;
-      while(stacks[selected].isNotEmpty && stacks[selected].last==color && stacks[i].length<capacity){stacks[i].add(stacks[selected].removeLast());}
+      history.add(board.snapshot());
+      board.move(selected, i);
       selected=-1;
-      if(_complete){won=true;unlocked[difficulty]=max(unlocked[difficulty]??1,min(50,level+1));}
+      if(_complete){won=true;unlocked[difficulty]=HexaLevel.unlockedAfterClear(unlocked: unlocked[difficulty]??1, level: level, complete: true);}
     });
     if(won) WidgetsBinding.instance.addPostFrameCallback((_) { if(mounted) _winDialog(); });
   }
   void _winDialog(){showDialog<void>(context:context,barrierDismissible:false,builder:(c)=>AlertDialog(title:const Text('Level complete!'),content:Text(level<50?'Level ${level+1} unlocked.':'All 50 $mode levels completed!'),actions:[FilledButton(onPressed:(){Navigator.pop(c);setState((){level=level<50?level+1:1;_newLevel();});},child:Text(level<50?'Next level':'Replay'))]));}
-  void _undo(){if(history.isEmpty||won)return;setState((){stacks=history.removeLast();selected=-1;});}
+  void _undo(){if(history.isEmpty||won)return;setState((){board=HexaRingBoard(history.removeLast(),capacity);selected=-1;});}
   void _hint(){if(hints<=0||won)return;for(var f=0;f<stacks.length;f++){for(var t=0;t<stacks.length;t++){if(_can(f,t)){setState((){selected=f;hints--;});ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text('Move a ring from stack ${f+1} to stack ${t+1}.')));return;}}}ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('No useful move found. Try Undo.')));}
   void _changeMode(int v){setState((){difficulty=v;level=min(level,unlocked[v]??1);_newLevel();});}
   void _showLevels() {
@@ -120,7 +109,9 @@ class _HexaRingSortGameState extends State<HexaRingSortGame> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LeaveGameScope(
+      confirm: history.isNotEmpty && !won,
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           tooltip: 'Back',
@@ -258,6 +249,7 @@ class _HexaRingSortGameState extends State<HexaRingSortGame> {
           ),
         ),
       ),
+    ),
     );
   }
 

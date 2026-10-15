@@ -7,9 +7,13 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: ChickenJumpGame()));
     expect(find.text('Chicken Jump'), findsOneWidget);
     expect(find.text('Difficulty'), findsOneWidget);
-    expect(find.text('Easy'), findsOneWidget);
     expect(find.text('Medium'), findsOneWidget);
-    expect(find.text('Hard'), findsOneWidget);
+    await tester.tap(find.byType(DropdownButton<JumpDifficulty>));
+    await tester.pumpAndSettle();
+    expect(find.text('Easy'), findsWidgets);
+    expect(find.text('Hard'), findsWidgets);
+    await tester.tap(find.text('Medium').last);
+    await tester.pumpAndSettle();
     expect(find.text('Ready, chicken?'), findsOneWidget);
     expect(find.text('Start run'), findsOneWidget);
     await tester.tap(find.text('Start run'));

@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 
 class BattleshipGame extends StatefulWidget {
   const BattleshipGame({super.key});
@@ -98,8 +99,12 @@ class _BattleshipGameState extends State<BattleshipGame> {
     });
   }
 
+  bool get _shotsFired => _shots.any((shots) => shots.any((cell) => cell != 0));
+
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => LeaveGameScope(
+    confirm: !_finished && _shotsFired,
+    child: Scaffold(
     backgroundColor: const Color(0xFFF5F3EC),
     appBar: AppBar(
       title: const Text('Battleship', style: TextStyle(fontWeight: FontWeight.w900)),
@@ -108,6 +113,7 @@ class _BattleshipGameState extends State<BattleshipGame> {
     ),
     body: SafeArea(
       child: _handoff ? _handoffScreen() : _battleScreen(),
+    ),
     ),
   );
 

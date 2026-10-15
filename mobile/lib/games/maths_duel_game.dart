@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../leave_game.dart';
+import 'maths_duel_logic.dart';
 
 /// Standalone port of Two-player-online's MathDuelLogic rules.
 class MathsDuelGame extends StatefulWidget {
@@ -11,92 +12,40 @@ class MathsDuelGame extends StatefulWidget {
 }
 
 class _MathsDuelGameState extends State<MathsDuelGame> {
-  final _rng = Random();
-  final _scores = [0, 0];
-  final _locked = <int>{};
+  final _logic = MathsDuelLogic();
   Timer? _advanceTimer;
-  int _questionNo = 0;
-  int? _solvedBy;
-  bool _between = false;
-  late String _question;
-  late int _answer;
-  late List<int> _options;
 
-  bool get _finished => _scores.any((score) => score >= 7);
-
-  @override
-  void initState() {
-    super.initState();
-    _makeQuestion();
-  }
-
-  void _makeQuestion() {
-    final level = _questionNo ~/ 3;
-    final op = _rng.nextInt(level < 3 ? 2 : 3);
-    late int a, b;
-    late String symbol;
-    if (op == 0) {
-      a = 2 + _rng.nextInt(20 + level * 5);
-      b = 2 + _rng.nextInt(20 + level * 5);
-      _answer = a + b;
-      symbol = '+';
-    } else if (op == 1) {
-      a = 10 + _rng.nextInt(30 + level * 5);
-      b = 1 + _rng.nextInt(a - 1);
-      _answer = a - b;
-      symbol = '−';
-    } else {
-      a = 2 + _rng.nextInt(10);
-      b = 2 + _rng.nextInt(10);
-      _answer = a * b;
-      symbol = '×';
-    }
-    _question = '$a $symbol $b = ?';
-    final values = <int>{_answer};
-    while (values.length < 4) {
-      final delta = 1 + _rng.nextInt(10);
-      final wrong = _rng.nextBool() ? _answer + delta : _answer - delta;
-      if (wrong >= 0) values.add(wrong);
-    }
-    _options = values.toList()..shuffle(_rng);
-    _locked.clear();
-    _solvedBy = null;
-    _between = false;
-  }
+  List<int> get _scores => _logic.scores;
+  Set<int> get _locked => _logic.locked;
+  int get _questionNo => _logic.questionNo;
+  int? get _solvedBy => _logic.solvedBy;
+  bool get _between => _logic.between;
+  String get _question => _logic.question;
+  int get _answer => _logic.answer;
+  List<int> get _options => _logic.options;
+  bool get _finished => _logic.finished;
 
   void _choose(int player, int value) {
-    if (_finished || _between || _locked.contains(player)) return;
-    setState(() {
-      if (value == _answer) {
-        _scores[player]++;
-        _solvedBy = player;
-        _between = true;
-        HapticFeedback.lightImpact();
-      } else {
-        _locked.add(player);
-        HapticFeedback.heavyImpact();
-        if (_locked.length == 2) _between = true;
-      }
-    });
+    final result = _logic.choose(player, value);
+    if (result == 'ignored') return;
+    setState(() {});
+    if (result == 'correct') {
+      HapticFeedback.lightImpact();
+    } else {
+      HapticFeedback.heavyImpact();
+    }
     if (_between && !_finished) {
       _advanceTimer?.cancel();
       _advanceTimer = Timer(const Duration(milliseconds: 1000), () {
         if (!mounted) return;
-        setState(() {
-          _questionNo++;
-          _makeQuestion();
-        });
+        setState(() => _logic.advance());
       });
     }
   }
 
   void _restart() {
     _advanceTimer?.cancel();
-    setState(() {
-      _scores.setAll(0, [0, 0]);
-      _questionNo = 0;
-      _makeQuestion();
-    });
+    setState(_logic.restart);
   }
 
   @override
@@ -107,8 +56,10 @@ class _MathsDuelGameState extends State<MathsDuelGame> {
 
   @override
   Widget build(BuildContext context) {
-    final winner = _scores[0] >= 7 ? 1 : 2;
-    return Scaffold(
+    final winner = _scores[0] >= 7 ? 1 : _scores[1] >= 7 ? 2 : 0;
+    return LeaveGameScope(
+      confirm: _logic.inProgress,
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           tooltip: 'Back',
@@ -146,6 +97,7 @@ class _MathsDuelGameState extends State<MathsDuelGame> {
                 Expanded(child: _playerZone(0)),
               ]),
       ),
+    ),
     );
   }
 

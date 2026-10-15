@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 
 class BikeRacingGame extends StatefulWidget {
   const BikeRacingGame({super.key});
@@ -34,7 +35,9 @@ class _BikeRacingGameState extends State<BikeRacingGame> {
     setState(()=>_lane=(_lane+direction).clamp(0,2));
   }
 
-  @override Widget build(BuildContext context) => Scaffold(
+  @override Widget build(BuildContext context) => LeaveGameScope(
+    confirm: _running,
+    child: Scaffold(
     backgroundColor: const Color(0xFFF5F3EC),
     appBar: AppBar(title: const Text('Bike Racing',style:TextStyle(fontWeight:FontWeight.w900)),
       leading: IconButton(tooltip:'Back',onPressed:()=>Navigator.maybePop(context),icon:const Icon(Icons.arrow_back_rounded)),
@@ -58,7 +61,7 @@ class _BikeRacingGameState extends State<BikeRacingGame> {
                 const SizedBox(height:8),Text(_over?'Score: $_score':'Swipe or use the lane buttons'),
                 const SizedBox(height:12),FilledButton(onPressed:_start,child:Text(_over?'Race again':'Start race')),
               ])))),
-            ];
+            ]);
           }),
         ),
       )),
@@ -71,6 +74,7 @@ class _BikeRacingGameState extends State<BikeRacingGame> {
       const SizedBox(height:8),
       const Text('Dodge road barriers and survive as long as you can.',style:TextStyle(color:Color(0xFF777A70),fontSize:12)),
     ]))),
+  ),
   );
 
   Widget _stat(String label,int n)=>Container(padding:const EdgeInsets.all(14),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(15)),child:Row(children:[Expanded(child:Text(label,style:const TextStyle(fontSize:10,fontWeight:FontWeight.w800,color:Color(0xFF777A70)))),Text('$n',style:const TextStyle(fontSize:22,fontWeight:FontWeight.w900))]));

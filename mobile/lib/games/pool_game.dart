@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 
 class PoolGame extends StatefulWidget {
   const PoolGame({super.key});
@@ -113,7 +114,9 @@ class _PoolGameState extends State<PoolGame> {
   void dispose() { _timer?.cancel(); super.dispose(); }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) => LeaveGameScope(
+    confirm: !_gameOver && (_scores[0] + _scores[1] > 0 || _moving),
+    child: Scaffold(
     backgroundColor: const Color(0xFFF5F3EC),
     appBar: AppBar(
       title: const Text('Pool', style: TextStyle(fontWeight: FontWeight.w900)),
@@ -148,6 +151,7 @@ class _PoolGameState extends State<PoolGame> {
       const Text('Local pass-and-play • Pocket a ball to keep your turn',style:TextStyle(color:Color(0xFF777A70),fontSize:11)),
       if(_gameOver) Padding(padding:const EdgeInsets.only(top:8),child:FilledButton.icon(onPressed:_reset,icon:const Icon(Icons.replay_rounded),label:const Text('Play another rack'))),
     ]))),
+  ),
   );
 
   Widget _scoreCard(String label,int score,bool active)=>Container(

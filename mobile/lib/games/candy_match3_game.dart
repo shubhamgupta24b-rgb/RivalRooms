@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 const _fruit = ['🍓','🍊','🍋','🍇','🫐','🍏'];
 class CandyMatch3Game extends StatefulWidget { const CandyMatch3Game({super.key}); @override State<CandyMatch3Game> createState()=>_CandyMatch3GameState(); }
 class _CandyMatch3GameState extends State<CandyMatch3Game> {
@@ -17,7 +18,10 @@ class _CandyMatch3GameState extends State<CandyMatch3Game> {
  void _levels(){showModalBottomSheet<void>(context:context,isScrollControlled:true,builder:(ctx)=>StatefulBuilder(builder:(ctx,refresh)=>SizedBox(height:MediaQuery.of(ctx).size.height*.68,child:Padding(padding:const EdgeInsets.all(16),child:Column(children:[const Text('Candy trail',style:TextStyle(fontSize:24,fontWeight:FontWeight.w900)),Wrap(spacing:4,children:['EASY','MEDIUM','HARD'].map((d)=>ChoiceChip(label:Text(d),selected:_diff==d,onSelected:(_)=>refresh(()=>setState((){_diff=d;_level=_unlocked[d]??1;})))).toList()),Expanded(child:GridView.builder(itemCount:50,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:5,crossAxisSpacing:6,mainAxisSpacing:6),itemBuilder:(_,i){final n=i+1,open=n<=(_unlocked[_diff]??1);return FilledButton(onPressed:open?(){setState((){_level=n;_start();});Navigator.pop(ctx);}:null,child:Text(open?n.toString():'🔒'));})),TextButton(onPressed:()=>Navigator.pop(ctx),child:const Text('Back to board'))])))));}
  @override
  Widget build(BuildContext context) {
-   return Scaffold(
+   final moveLimit = _diff == 'EASY' ? 26 : _diff == 'MEDIUM' ? 22 : 18;
+   return LeaveGameScope(
+     confirm: !_ended && (_score > 0 || _moves < moveLimit || _hammer < 2 || _shuffle < 2 || _bomb < 1),
+     child: Scaffold(
      backgroundColor: const Color(0xFFF5F0F8),
      appBar: AppBar(
        leading: IconButton(tooltip: 'Back', onPressed: () => Navigator.maybePop(context), icon: const Icon(Icons.arrow_back_rounded)),
@@ -99,6 +103,7 @@ class _CandyMatch3GameState extends State<CandyMatch3Game> {
          ),
        ),
      ),
+   ),
    );
  }
  Widget _stat(String label,String value)=>Expanded(child:Container(margin:const EdgeInsets.only(right:5),padding:const EdgeInsets.symmetric(vertical:8),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(12)),child:Column(children:[Text(label,style:const TextStyle(fontSize:10,color:Color(0xFF75677F),fontWeight:FontWeight.w800)),Text(value,style:const TextStyle(fontWeight:FontWeight.w900))])));

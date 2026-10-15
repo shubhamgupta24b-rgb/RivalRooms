@@ -1,6 +1,26 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rivalrooms/games/connect_four_logic.dart';
 
+bool _hasRun(ConnectFourLogic game, int player) {
+  const directions = [(1, 0), (0, 1), (1, 1), (1, -1)];
+  for (var row = 0; row < ConnectFourLogic.rows; row++) {
+    for (var column = 0; column < ConnectFourLogic.columns; column++) {
+      for (final (dc, dr) in directions) {
+        var count = 0;
+        var x = column;
+        var y = row;
+        while (x >= 0 && x < ConnectFourLogic.columns && y >= 0 && y < ConnectFourLogic.rows && game.at(x, y) == player) {
+          count++;
+          x += dc;
+          y += dr;
+        }
+        if (count >= 4) return true;
+      }
+    }
+  }
+  return false;
+}
+
 void main() {
   group('Connect Four rules', () {
     test('drops to the lowest open cell and alternates players', () {
@@ -59,6 +79,30 @@ void main() {
       }
       expect(game.winner, 0);
       expect(game.winCells.length, greaterThanOrEqualTo(4));
+    });
+
+    test('a full board without four in a row is a draw and rejects input', () {
+      final game = ConnectFourLogic(startingPlayer: 0);
+      const rowsFromTop = [
+        [1, 1, 1, 0, 1, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0],
+        [1, 1, 1, 0, 1, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0],
+        [1, 1, 1, 0, 1, 1, 1],
+        [0, 0, 0, 1, 0, 0, 0],
+      ];
+      for (var row = 0; row < ConnectFourLogic.rows; row++) {
+        for (var column = 0; column < ConnectFourLogic.columns; column++) {
+          game.cells[row * ConnectFourLogic.columns + column] = rowsFromTop[row][column];
+        }
+      }
+      game.moves = game.cells.length;
+      expect(_hasRun(game, 0), isFalse);
+      expect(_hasRun(game, 1), isFalse);
+      expect(game.isDraw, isTrue);
+      expect(game.finished, isTrue);
+      expect(game.drop(0), isNull);
+      expect(game.winner, isNull);
     });
 
     test('reset clears the board and win state', () {

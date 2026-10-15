@@ -1,0 +1,21 @@
+# Flutter / Dart
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/captures/
+mobile/android/**/GeneratedPluginRegistrant.java
+mobile/android/key.properties
+*.jks
+*.keystore
+
+# Node
+server/node_modules/
+
+# Editor and OS
+.idea/
+*.iml
+.DS_Store
+Thumbs.db

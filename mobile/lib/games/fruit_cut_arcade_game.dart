@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 import 'package:flutter/scheduler.dart';
 
 const _fruitColors = [Color(0xFF2ECC71), Color(0xFFFF9F1C), Color(0xFFE63946), Color(0xFFF4D35E), Color(0xFF9B5DE5), Color(0xFFFF758F)];
@@ -64,7 +65,9 @@ class _FruitCutArcadeGameState extends State<FruitCutArcadeGame> with WidgetsBin
   @override void dispose(){WidgetsBinding.instance.removeObserver(this);_ticker.dispose();super.dispose();}
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return LeaveGameScope(
+      confirm: !_ended && (_score > 0 || _sliced > 0 || _lives < 3),
+      child: Scaffold(
       backgroundColor: const Color(0xFFF5F3EC),
       appBar: AppBar(
         backgroundColor: const Color(0xFFF5F3EC),
@@ -157,6 +160,7 @@ class _FruitCutArcadeGameState extends State<FruitCutArcadeGame> with WidgetsBin
           ),
         ),
       ),
+    ),
     );
   }
   Widget _stat(String label, String value, {VoidCallback? tap}) {

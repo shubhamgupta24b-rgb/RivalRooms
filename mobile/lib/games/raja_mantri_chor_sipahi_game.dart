@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 
 const _green = Color(0xFF476B4B);
 const _ink = Color(0xFF202520);
@@ -63,7 +64,11 @@ class _RajaMantriChorSipahiGameState extends State<RajaMantriChorSipahiGame> {
   @override
   Widget build(BuildContext context) {
     final role = _roles[_revealIndex];
-    return Scaffold(
+    final matchFinished = _round == 20 && _roundComplete;
+    final inProgress = !matchFinished && (_revealed || _revealIndex > 0 || _guessing || _roundComplete || _round > 1);
+    return LeaveGameScope(
+      confirm: inProgress,
+      child: Scaffold(
       appBar: AppBar(
         leading: IconButton(tooltip: 'Back to games', icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.maybePop(context)),
         title: const Text('Raja Mantri Chor Sipahi', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
@@ -127,6 +132,7 @@ class _RajaMantriChorSipahiGameState extends State<RajaMantriChorSipahiGame> {
         const SizedBox(height: 20),
         const Text('PASS-AND-PLAY · LOCAL ONLY', textAlign: TextAlign.center, style: TextStyle(fontSize: 10, color: Color(0xFF777A70), letterSpacing: 1.2, fontWeight: FontWeight.w800)),
       ])),
+    ),
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '../leave_game.dart';
 
 const _ink = Color(0xFF202520);
 const _paper = Color(0xFFF5F3EC);
@@ -99,12 +100,9 @@ class _ChickenJumpGameState extends State<ChickenJumpGame> {
 
   @override
   Widget build(BuildContext context) {
-    final difficultyName = switch (_difficulty) {
-      JumpDifficulty.easy => 'Easy',
-      JumpDifficulty.medium => 'Medium',
-      JumpDifficulty.hard => 'Hard',
-    };
-    return Scaffold(
+    return LeaveGameScope(
+      confirm: _running,
+      child: Scaffold(
       backgroundColor: _paper,
       appBar: AppBar(
         backgroundColor: _paper,
@@ -178,6 +176,7 @@ class _ChickenJumpGameState extends State<ChickenJumpGame> {
           ),
         ),
       ),
+    ),
     );
   }
 
