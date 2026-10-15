@@ -1,6 +1,6 @@
 # RivalRooms Implementation Tracker
 
-Last updated: 2026-10-15 14:52 (Asia/Calcutta)
+Last updated: 2026-10-15 15:05 (Asia/Calcutta)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
 
@@ -22,6 +22,15 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 
 Battleship and Pool are preview cards and are excluded. This count is based on source and CI, not device playtesting. Hexa Ring Sort generated-level solvability still needs dedicated verification.
 
+## Fruit Cut Arcade upgrade — validation pending
+- Arcade source commit: `64eb5302f839b9ee496d56aad0b005df6e1e04c2` — added `mobile/lib/games/fruit_cut_arcade_game.dart`.
+- Route integration commit: `e1c39f0b7c4ba3091c785cc05e9e6597004992d8` — Fruit Cut now opens the swipe-based arcade rather than the previous tap-fruit/30-second prototype.
+- Follow-up fixes: `81521ab645c45f33716206a223d97fa3e8c27106`, `53c2d8e3905e25e49784eee08007ff696dc5e7da`, and `d761da8885dfc10afc75800ce4fb64c3ffb74908` — numeric type handling, lives display, and level-map modal closure.
+- Widget tests: `f1a9579c5fcc7d8843764ffc89ce6b6e051b6372` — verifies the arena HUD, navigation, power-up controls, and level-map/difficulty controls.
+- Features ported from the supplied HTML concept: pointer-swipe slicing arena, fruit waves and visual juice particles, bomb hazards, lives, score and slice target, difficulty scaling, 50 level slots/unlock progression, Freeze/Frenzy/Shield power-ups, goal progress bar, restart and Back controls.
+- Progress is currently held in memory and resets on app relaunch; persistence is a follow-up. The game is local-only; online multiplayer synchronization is not implemented.
+- Validation has not been run locally. Wait for GitHub Actions on the latest commit; do not call this build-verified or count it as newly validated until Flutter analyze/tests pass.
+
 ## Candy Match 3 addition — validation pending
 - Game source commit: `19eb4d159d209c6f1ce6c766b18cb76150112775` — added `mobile/lib/games/candy_match3_game.dart`.
 - Home/library integration commit: `af7df07a9433686c3bd1e376eb47afe3434259fd` — changed `mobile/lib/main.dart` to add the game card and route.
@@ -33,7 +42,8 @@ Battleship and Pool are preview cards and are excluded. This count is based on s
 - Known gameplay caveat to check in CI/review: power-ups consume a move; ensure no analyzer/test failures and verify generated board always has a valid move. No device or Android build run.
 
 ## Latest code change
-- Commit: `45a9788a1efccf38af20c548ae2cf0c6c91bbd49`
+- Latest game feature: Fruit Cut Arcade, commit `d761da8885dfc10afc75800ce4fb64c3ffb74908`.
+- Previous UI logic change: Connect Four, commit `45a9788a1efccf38af20c548ae2cf0c6c91bbd49`
 - Files: `mobile/lib/games/connect_four_game.dart`, `mobile/test/connect_four_logic_test.dart`.
 - Connect Four now shows clear turn/win/draw status, numbered blue/red player discs, disc counts, winning-disc highlights, accessible column labels, restart, and a finished-round action.
 - Added rule tests for gravity, alternating turns, invalid/full columns, horizontal/vertical/diagonal wins, win lockout, and reset.
@@ -51,7 +61,7 @@ Battleship and Pool are preview cards and are excluded. This count is based on s
 - Full source, asset, and test migration from the reference repository remains incomplete. The server's legacy Fruit Duel handler is not a Fruit Cut client.
 
 ## Blockers and next work
-1. Validate Candy Match 3 with CI; fix any compile/analyzer/widget-test failures and verify its board generation and power-up edge cases.
+1. Validate Fruit Cut Arcade and Candy Match 3 with CI; fix compile/analyzer/widget-test failures and verify gameplay edge cases. Previously:  fix any compile/analyzer/widget-test failures and verify its board generation and power-up edge cases.
 2. Complete the Flutter Socket.IO connection and guest handshake; wire room creation/joining, readiness, server-owned turns/scores/timers, and safe Back/Android Back handling.
 3. Finish CI for `45a9788a1efccf38af20c548ae2cf0c6c91bbd49`, fix failures, and record the final result.
 4. Migrate remaining reference Flutter assets, source, and tests in small validated batches.
