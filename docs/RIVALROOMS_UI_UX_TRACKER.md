@@ -5,6 +5,7 @@ Last updated: 2026-10-15 16:45 (Asia/Calcutta)
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
 
 ## Latest verified progress — 2026-10-15
+- Chicken Jump added to the home/library and route in `mobile/lib/main.dart`; implemented tap-to-jump arcade loop, score/best counters, Easy/Medium/Hard difficulty, restart, Back navigation and a widget test (`mobile/test/chicken_jump_game_test.dart`). Commits: `36a19a62` (game), `df0fb91a` (library/routing), `39ceeb60` (widget test), followed by collision-window correction. CI validation is pending; do not count as verified until the workflow passes.
 - CI run `38718240499` passed on commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`: Flutter analyze, Flutter tests, and server tests all succeeded. Candy Match 3 and Fruit Cut syntax/test issues are resolved at that commit.
 - Pool is implemented as a local pass-and-play table game in `mobile/lib/games/pool_game.dart`, with score/turn tracking, drag-to-aim shots, ball movement/collisions, pockets, restart and Back controls. Home-card routing and a widget test are included. CI run `38719377649` passed: Flutter analysis, Flutter tests, and server tests succeeded. Pool is code/CI-verified but still needs device playtesting.
 - Candy Match 3 is code/CI-verified at commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`.
