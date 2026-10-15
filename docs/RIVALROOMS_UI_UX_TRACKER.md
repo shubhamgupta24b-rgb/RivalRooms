@@ -1,6 +1,6 @@
 # RivalRooms Implementation Tracker
 
-Last updated: 2026-10-15 15:05 (Asia/Calcutta)
+Last updated: 2026-10-15 15:08 (Asia/Calcutta)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
 
@@ -27,9 +27,10 @@ Battleship and Pool are preview cards and are excluded. This count is based on s
 - Route integration commit: `e1c39f0b7c4ba3091c785cc05e9e6597004992d8` — Fruit Cut now opens the swipe-based arcade rather than the previous tap-fruit/30-second prototype.
 - Follow-up fixes: `81521ab645c45f33716206a223d97fa3e8c27106`, `53c2d8e3905e25e49784eee08007ff696dc5e7da`, and `d761da8885dfc10afc75800ce4fb64c3ffb74908` — numeric type handling, lives display, and level-map modal closure.
 - Widget tests: `f1a9579c5fcc7d8843764ffc89ce6b6e051b6372` — verifies the arena HUD, navigation, power-up controls, and level-map/difficulty controls.
+- Test reliability follow-up: `6e37df163fd36a48efaeab361e832accb4eac323` — avoids pumpAndSettle while the game ticker is active.
 - Features ported from the supplied HTML concept: pointer-swipe slicing arena, fruit waves and visual juice particles, bomb hazards, lives, score and slice target, difficulty scaling, 50 level slots/unlock progression, Freeze/Frenzy/Shield power-ups, goal progress bar, restart and Back controls.
 - Progress is currently held in memory and resets on app relaunch; persistence is a follow-up. The game is local-only; online multiplayer synchronization is not implemented.
-- Validation has not been run locally. Wait for GitHub Actions on the latest commit; do not call this build-verified or count it as newly validated until Flutter analyze/tests pass.
+- Validation has not been run locally. GitHub Actions run `38713341061` was queued for the test reliability follow-up at last inspection; do not call this build-verified or count it as newly validated until Flutter analyze/tests pass.
 
 ## Candy Match 3 addition — validation pending
 - Game source commit: `19eb4d159d209c6f1ce6c766b18cb76150112775` — added `mobile/lib/games/candy_match3_game.dart`.
