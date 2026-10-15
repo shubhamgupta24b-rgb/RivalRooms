@@ -1,8 +1,14 @@
 # RivalRooms Implementation Tracker
 
-Last updated: 2026-10-15 15:08 (Asia/Calcutta)
+Last updated: 2026-10-15 15:45 (Asia/Calcutta)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
+
+## Latest verified progress — 2026-10-15
+- CI run `38718240499` passed on commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`: Flutter analyze, Flutter tests, and server tests all succeeded. Candy Match 3 and Fruit Cut syntax/test issues are resolved at that commit.
+- Pool is now being implemented as a local pass-and-play table game in `mobile/lib/games/pool_game.dart`, with score/turn tracking, drag-to-aim shots, ball movement/collisions, pockets, restart and Back controls. Home-card routing and a widget test have been added. Pool is **not counted as validated/playable until its latest CI run passes**.
+- Current follow-up CI run is testing Pool syntax and widget behavior; recheck the latest run before marking Pool complete.
+- Keep Battleship as the next preview-card game to implement after Pool validation. Online multiplayer is still not wired to these local game screens.
 
 ## Boundaries
 - Write only to RivalRooms; keep Two-player-online read-only.
