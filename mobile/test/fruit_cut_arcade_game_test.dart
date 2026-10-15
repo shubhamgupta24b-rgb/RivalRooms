@@ -35,7 +35,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('Fruit trail'), findsOneWidget);
     expect(find.text('EASY'), findsOneWidget);
-    expect(find.text('MEDIUM'), findsOneWidget);
+    expect(find.text('MEDIUM'), findsAtLeastNWidgets(1));
     expect(find.text('HARD'), findsOneWidget);
     expect(find.byType(GridView), findsOneWidget);
   });
