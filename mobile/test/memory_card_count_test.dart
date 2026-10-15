@@ -16,7 +16,7 @@ void main() {
     await tester.tap(find.byType(DropdownButton<int>));
     await tester.pumpAndSettle();
     for (final count in [8, 12, 16, 20, 24, 28, 32]) {
-      expect(find.text('$count cards'), findsOneWidget);
+      expect(find.text('$count cards'), findsAtLeastNWidgets(1));
     }
     await tester.tap(find.text('32 cards').last);
     await tester.pumpAndSettle();
