@@ -91,3 +91,13 @@ Every iteration must:
 3. Connect the Flutter client to the migrated Socket.IO room server; implement active-match exit confirmation and Android Back handling.
 4. Replace remaining placeholder game cards with real core loops, working in small batches and counting only tested playable games.
 5. Verify Render configuration, Android release build, and device tests only when the relevant steps actually run.
+
+
+## Implementation update — Hexa Ring Sort, Maths Duel, and Connect Four routing (2026-10-15)
+- **Hexa Ring Sort:** added `mobile/lib/games/hexa_ring_sort_game.dart` with 50 level progression, Easy/Medium/Hard modes, stack moves, undo, hints, restart, and a level-complete flow; wired it into the game library in `mobile/lib/main.dart`.
+- **Maths Duel:** added `mobile/lib/games/maths_duel_game.dart` with local pass-and-play, 10 rounds, alternating players, generated arithmetic questions, multiple-choice answers, scores, restart, and end-of-match result; wired into the game library.
+- **Connect Four:** the native game screen and deterministic logic already existed under `mobile/lib/games/` but were not reachable from the current game-library routing. Added an explicit route from the Connect Four card.
+- **Commits:** Hexa Ring Sort `c1924da59a42047f6a9a8e72084ade6d6674852f`, library integration `22d545657129272298bf3feb6226d6abaece1c6`, syntax fix `3f19aebba56b8c8342ce368de2703ed930bfac70`; Maths Duel `e0600db57f0078a62e469ecceb70968ba8a6d998`, library integration `e6ab6e98b6d12c8c927c8a82f926854266bf0181`; Connect Four route `e2cb002d098d6ebe722209fdc3bab073454a796f`.
+- **Validation:** the initial Hexa Ring Sort commits failed Flutter analysis because of malformed widget syntax. A fix was committed and CI was running at the time of this update. Maths Duel and Connect Four route CI runs were queued/in progress; no passing status is claimed yet. Server Node tests passed on the earlier Hexa Ring Sort library commit.
+- **Known limitation:** Hexa Ring Sort level generation and solvability need gameplay validation; level progress is session-only. Maths Duel is local pass-and-play, not online synchronized yet. Connect Four route is now reachable but its existing screen UI still needs polish and draw/turn messaging review.
+- **Next work:** fix any CI failures first, then continue replacing placeholder screens with real playable game loops, migrate missing assets/source, and implement actual Socket.IO online rooms plus safe active-match exit behavior.
