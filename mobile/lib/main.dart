@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'games/hexa_ring_sort_game.dart';
+import 'games/maths_duel_game.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -61,6 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const SuikaPopGame()));
    } else if (game.title=='Hexa Ring Sort') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const HexaRingSortGame()));
+   } else if (game.title=='Maths Duel') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const MathsDuelGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
