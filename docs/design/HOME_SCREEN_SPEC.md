@@ -5,6 +5,34 @@
 ## Goal
 A single scrollable Home page that helps players choose how to play immediately. Avoid a multi-tab dashboard, marketing copy, and decorative clutter.
 
+## Low-fidelity layout preview
+
+```text
+┌──────────────────────────────────────────┐
+│ RivalRooms                     Records ⚙ │
+│                                          │
+│ ┌──────────────────┐ ┌─────────────────┐ │
+│ │ 🌐 Online        │ │ Single Player   │ │
+│ │ Quick match      │ │ Play on your own│ │
+│ └──────────────────┘ └─────────────────┘ │
+│ ┌──────────────────┐ ┌─────────────────┐ │
+│ │ 👥 Multiplayer   │ │ Offline / Local │ │
+│ │ Create or join   │ │ Same phone/Wi-Fi│ │
+│ └──────────────────┘ └─────────────────┘ │
+│                                          │
+│ [Continue — only if a valid recent game] │
+│                                          │
+│ Games to play                            │
+│ ┌─────────────────┐ ┌──────────────────┐ │
+│ │ [Basketball     │ │ [Fruit Cut       │ │
+│ │  gameplay crop] │ │  gameplay crop]  │ │
+│ │ Basketball Hoops│ │ Fruit Cut        │ │
+│ └─────────────────┘ └──────────────────┘ │
+└──────────────────────────────────────────┘
+```
+
+This is a hierarchy/wireframe, not final pixel artwork. Actual game imagery replaces the bracketed crops; the mode cards should fit above the preview row on a typical phone.
+
 ## Layout
 
 ### Compact top bar
