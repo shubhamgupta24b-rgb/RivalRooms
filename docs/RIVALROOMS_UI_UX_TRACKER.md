@@ -84,3 +84,13 @@ This count is based on source and CI, not device playtesting. Hexa Ring Sort gen
 6. Verify Android release artifacts and deployment only when those steps actually run.
 
 The 50-playable-game target for 2026-10-15 17:00 is not currently realistic. Prioritize verified functionality over inflating the count.
+
+
+## Latest continuation — Raja Mantri Chor Sipahi (2026-10-15)
+- Added `mobile/lib/games/raja_mantri_chor_sipahi_game.dart` and integrated it into the home/library list and route in `mobile/lib/main.dart`.
+- Local four-player pass-and-play flow: each player privately reveals a role, hides it and passes the device; the Sipahi then guesses the Chor; all roles and scores are revealed; the match runs for 20 rounds with cumulative scoring.
+- Scoring follows the requested table: Raja +1000, Mantri +500 when the guess is correct (otherwise 0), Chor +500 when not caught (otherwise 0), Sipahi −300.
+- Added `mobile/test/raja_mantri_chor_sipahi_game_test.dart` for private role handoff and entry into the guessing phase.
+- Commit sequence: game `7997e2a1`, home/library route `36f7a9ab`, widget test `d243bddf`.
+- This is local pass-and-play only. CI and on-device validation have not been confirmed; do not count it as verified until Flutter analysis/tests pass.
+- Bike Racing, Carrom and Chicken Jump remain additional local game implementations with CI validation pending. Online synchronization is still unfinished.
