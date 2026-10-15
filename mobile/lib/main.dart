@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'games/hexa_ring_sort_game.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -33,6 +34,7 @@ const games = <GameInfo>[
  GameInfo('Basketball Hoops','Beat your best score','🏀','Quick play',Color(0xFFF1C6A3)),
  GameInfo('Fruit Cut','Slice. Score. Repeat.','🍉','Quick play',Color(0xFFD4E4C8)),
  GameInfo('Suika Pop','Merge fruits. Grow the watermelon.','🍒','Quick play',Color(0xFFFFD8BE)),
+ GameInfo('Hexa Ring Sort','Sort colourful rings across 50 levels','💠','Puzzle games',Color(0xFFE6D5F2)),
  GameInfo('Guess the Person','Can you read their clues?','🕵️','Party games',Color(0xFFDAD6ED)),
  GameInfo('Connect Four','Four in a row wins','🔴','Board games',Color(0xFFF0D1CB)),
  GameInfo('Battleship','Outsmart your opponent','🚢','Board games',Color(0xFFC9DFE1)),
@@ -57,6 +59,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const GuessPersonGame()));
    } else if (game.title=='Suika Pop') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const SuikaPopGame()));
+   } else if (game.title=='Hexa Ring Sort') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const HexaRingSortGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
