@@ -1,6 +1,6 @@
 # RivalRooms Implementation Tracker
 
-Last updated: 2026-10-15 16:45 (Asia/Calcutta)
+Last updated: 2026-10-15 (follow-up implementation)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
 
@@ -101,3 +101,11 @@ The 50-playable-game target for 2026-10-15 17:00 is not currently realistic. Pri
 - Updated the widget test to assert that the guessing phase exposes exactly three targets.
 - Follow-up commits: game logic/UI `5452e667`; widget test `ce170413`.
 - CI and device validation remain unconfirmed; still local pass-and-play only.
+
+
+## Follow-up implementation — 2026-10-15
+- Raja Mantri Chor Sipahi is now wired into the game library and home screen. It supports four-player local pass-and-play, private role reveals, Sipahi guessing among the other three players, cumulative scoring, and a 20-round match. Source: `mobile/lib/games/raja_mantri_chor_sipahi_game.dart`; widget test: `mobile/test/raja_mantri_chor_sipahi_game_test.dart`.
+- Scoring implemented: Raja +1000; Mantri +500 for a correct guess (otherwise 0); Chor +500 if not caught (otherwise 0); Sipahi −300. This is local pass-and-play, not online multiplayer.
+- Added local Carrom, Chicken Jump, and Bike Racing implementations with home-screen routes and widget tests. These are not included in the code/CI-verified count until CI is confirmed.
+- Validation caveat: status-check lookups for the latest test commits returned no status records. That is **unknown/pending**, not a pass or failure. Flutter analyze, tests, and Android build still need a confirmed Actions result; newly added games also need device playtesting.
+- Next validation gate: obtain an actual successful Actions run for the latest main branch, fix any analyzer/test failures, then exercise all new game routes on an Android device. Only after that should the verified count be increased.
