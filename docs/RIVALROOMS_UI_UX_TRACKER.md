@@ -39,7 +39,7 @@ Every iteration must:
 | In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Basic visible Back on prototype game screens | Not run | Active online match confirmation and Android Back policy are not implemented yet |
 | Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
 | Maths Duel | `docs/design/MATHS_DUEL_SPEC.md` | Not started | Not run | One-question focus; preserve answer validation and timer |
-| Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Local 5-round clue quiz in `mobile/lib/main.dart` (4 choices, scoring, feedback, restart) | CI pending for commit `207faa8` | Progressive hints; preserve hint order and scoring |
+| Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Single-question clue round with four choices, answer feedback, and Next person to start a fresh round | CI pending for commit `e5aea38` | Progressive hints; preserve hint order and scoring |
 | Pool | `docs/design/POOL_SPEC.md` | Not started | Not run | Separate aiming from shooting; preserve physics |
 | Connect Four | `docs/design/CONNECT_FOUR_SPEC.md` | Not started | Not run | Legal-move preview; preserve win detection and turns |
 | Battleship | `docs/design/BATTLESHIP_SPEC.md` | Not started | Not run | Separate targeting states; preserve hidden information |
@@ -64,10 +64,10 @@ Every iteration must:
 - **Tests/build/deployment:** not run.
 
 ## Implementation update — Guess the Person
-- **Principle:** keep each round focused on one readable clue and make answer feedback immediate.
-- **Code changes:** added a local five-round Guess the Person quiz with four choices per round, scoring, correct/incorrect feedback, next-clue flow, final score, restart, and visible Back.
-- **Commit:** `207faa8ae81195ecd70e9f455789a7d6546f7b38`.
-- **Validation:** CI has not yet run for this commit. The previous CI run passed Flutter analysis/tests and Node tests on `261dba5`.
+- **Principle:** one clue and one decision per round, with immediate, unambiguous feedback.
+- **Code changes:** replaced the multi-question sequence with a single-question round, four answer choices, correct/incorrect feedback, a Next person action that starts a fresh question, and visible Back.
+- **Commit:** `e5aea3849ef0dacec45e62b9a558f94046294949`.
+- **Validation:** CI is pending for this commit; previous CI passed Flutter analysis/tests and Node tests on `261dba5`.
 
 ## Implementation kickoff — Flutter starter and server migration
 - **Principle:** make the first playable path tangible while keeping multiplayer status honest.
