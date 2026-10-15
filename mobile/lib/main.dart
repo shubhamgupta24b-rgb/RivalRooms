@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'games/hexa_ring_sort_game.dart';
 import 'games/maths_duel_game.dart';
 import 'games/connect_four_game.dart';
+import 'games/candy_match3_game.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -42,6 +43,7 @@ const games = <GameInfo>[
  GameInfo('Battleship','Outsmart your opponent','🚢','Board games',Color(0xFFC9DFE1)),
  GameInfo('Pool','Line up the perfect shot','🎱','Board games',Color(0xFFD1E2CE)),
  GameInfo('Maths Duel','Fast answers, close race','➗','Quick play',Color(0xFFF0D9AA)),
+ GameInfo('Candy Match 3','Match fruit, clear levels, use power-ups','🍬','Puzzle games',Color(0xFFE6D5F2)),
 ];
 
 class HomeScreen extends StatefulWidget {
@@ -65,6 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const HexaRingSortGame()));
    } else if (game.title=='Maths Duel') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const MathsDuelGame()));
+   } else if (game.title=='Candy Match 3') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const CandyMatch3Game()));
    } else if (game.title=='Connect Four') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const ConnectFourGame()));
    } else {
