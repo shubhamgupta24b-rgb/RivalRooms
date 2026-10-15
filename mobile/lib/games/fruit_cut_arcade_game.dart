@@ -62,14 +62,103 @@ class _FruitCutArcadeGameState extends State<FruitCutArcadeGame> with WidgetsBin
     TextButton(onPressed:()=>Navigator.pop(ctx),child:const Text('Back to dojo'))
   ]))))).whenComplete((){_mapOpen=false;if(mounted&&!_ended)setState(()=>_running=true);});}
   @override void dispose(){WidgetsBinding.instance.removeObserver(this);_ticker.dispose();super.dispose();}
-  @override Widget build(BuildContext context)=>Scaffold(backgroundColor:const Color(0xFFF5F3EC),appBar:AppBar(backgroundColor:const Color(0xFFF5F3EC),foregroundColor:const Color(0xFF202520),leading:IconButton(tooltip:'Back',onPressed:()=>Navigator.maybePop(context),icon:const Icon(Icons.arrow_back_rounded)),title:const Text('Fruit Cut',style:TextStyle(fontWeight:FontWeight.w900)),actions:[IconButton(tooltip:'50 Levels',onPressed:_openMap,icon:const Icon(Icons.map_outlined)),IconButton(tooltip:'Restart',onPressed:()=>setState(_reset),icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.fromLTRB(12,4,12,12),child:Column(children:[
-    Row(children:[_stat('DIFFICULTY',_diff,tap:(){final d=['EASY','MEDIUM','HARD'];setState((){_diff=d[(d.indexOf(_diff)+1)%3];_level=_unlocked[_diff]??1;_reset();});}),const SizedBox(width:6),_stat('LEVEL',_level.toString())]),
-    const SizedBox(height:6),Row(children:[_stat('SLICED',_sliced.toString()+' / '+_target.toString()),const SizedBox(width:6),_stat('SCORE',_score.toString()),const SizedBox(width:6),_stat('LIVES',(_shieldOn?'🛡️ ':'')+List.filled(_lives < 0 ? 0 : _lives,'❤️').join())]),
-    const SizedBox(height:7),ClipRRect(borderRadius:BorderRadius.circular(20),child:LinearProgressIndicator(value:(_sliced/_target).clamp(0.0,1.0),minHeight:8,backgroundColor:const Color(0xFFE3DED2),color:const Color(0xFF476B4B))),
-    const SizedBox(height:8),Expanded(child:LayoutBuilder(builder:(ctx,box){_w=box.maxWidth;_h=box.maxHeight;return ClipRRect(borderRadius:BorderRadius.circular(22),child:DecoratedBox(decoration:const BoxDecoration(gradient:RadialGradient(colors:[Color(0xFF3B2059),Color(0xFF221036)])),child:GestureDetector(behavior:HitTestBehavior.opaque,onPanStart:(d)=>_down(d.localPosition),onPanUpdate:(d)=>_move(d.localPosition),onPanEnd:(_)=>_trailTime=.12,child:CustomPaint(size:Size.infinite,painter:_FruitArenaPainter(fruits:_fruits,particles:_particles,trail:_trail,frozen:_freezeTime>0,shield:_shieldOn))))); })),
-    const SizedBox(height:9),Row(children:[_power('❄️','Freeze',_freeze,_freeze<=0||_ended,_useFreeze),const SizedBox(width:6),_power('🍉','Frenzy',_frenzy,_frenzy<=0||_ended,_useFrenzy),const SizedBox(width:6),_power('🛡️','Shield',_shield,_shield<=0||_shieldOn||_ended,_useShield)]),
-    const SizedBox(height:3),const Text('Swipe through fruit. Avoid bombs. Don’t let too many fruits fall.',style:TextStyle(fontSize:10,color:Color(0xFF777A70),fontWeight:FontWeight.w600))
-  ]))));
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F3EC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF5F3EC),
+        foregroundColor: const Color(0xFF202520),
+        leading: IconButton(tooltip: 'Back', onPressed: () => Navigator.maybePop(context), icon: const Icon(Icons.arrow_back_rounded)),
+        title: const Text('Fruit Cut', style: TextStyle(fontWeight: FontWeight.w900)),
+        actions: [
+          IconButton(tooltip: '50 Levels', onPressed: _openMap, icon: const Icon(Icons.map_outlined)),
+          IconButton(tooltip: 'Restart', onPressed: () => setState(_reset), icon: const Icon(Icons.refresh_rounded)),
+        ],
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+          child: Column(
+            children: [
+              Row(children: [
+                _stat('DIFFICULTY', _diff, tap: () {
+                  const levels = ['EASY', 'MEDIUM', 'HARD'];
+                  setState(() { _diff = levels[(levels.indexOf(_diff) + 1) % levels.length]; _level = _unlocked[_diff] ?? 1; _reset(); });
+                }),
+                const SizedBox(width: 6),
+                _stat('LEVEL', '$_level'),
+              ]),
+              const SizedBox(height: 6),
+              Row(children: [
+                _stat('SLICED', '$_sliced / $_target'),
+                const SizedBox(width: 6),
+                _stat('SCORE', '$_score'),
+                const SizedBox(width: 6),
+                _stat('LIVES', '${_shieldOn ? '🛡️ ' : ''}${List.filled(_lives < 0 ? 0 : _lives, '❤️').join()}'),
+              ]),
+              const SizedBox(height: 7),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: LinearProgressIndicator(
+                  value: (_sliced / _target).clamp(0.0, 1.0),
+                  minHeight: 8,
+                  backgroundColor: const Color(0xFFE3DED2),
+                  color: const Color(0xFF476B4B),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (ctx, box) {
+                    _w = box.maxWidth;
+                    _h = box.maxHeight;
+                    return ClipRRect(
+                      borderRadius: BorderRadius.circular(22),
+                      child: DecoratedBox(
+                        decoration: const BoxDecoration(
+                          gradient: RadialGradient(colors: [Color(0xFF3B2059), Color(0xFF221036)]),
+                        ),
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onPanStart: (d) => _down(d.localPosition),
+                          onPanUpdate: (d) => _move(d.localPosition),
+                          onPanEnd: (_) => _trailTime = .12,
+                          child: CustomPaint(
+                            size: Size.infinite,
+                            painter: _FruitArenaPainter(
+                              fruits: _fruits,
+                              particles: _particles,
+                              trail: _trail,
+                              frozen: _freezeTime > 0,
+                              shield: _shieldOn,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 9),
+              Row(children: [
+                _power('❄️', 'Freeze', _freeze, _freeze <= 0 || _ended, _useFreeze),
+                const SizedBox(width: 6),
+                _power('🍉', 'Frenzy', _frenzy, _frenzy <= 0 || _ended, _useFrenzy),
+                const SizedBox(width: 6),
+                _power('🛡️', 'Shield', _shield, _shield <= 0 || _shieldOn || _ended, _useShield),
+              ]),
+              const SizedBox(height: 3),
+              const Text(
+                'Swipe through fruit. Avoid bombs. Don’t let too many fruits fall.',
+                style: TextStyle(fontSize: 10, color: Color(0xFF777A70), fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
   Widget _stat(String l,String v,{VoidCallback? tap})=>Expanded(child:Material(color:Colors.white,borderRadius:BorderRadius.circular(12),child:InkWell(onTap:tap,borderRadius:BorderRadius.circular(12),child:Padding(padding:const EdgeInsets.symmetric(vertical:8,horizontal:4),child:Column(children:[Text(l,style:const TextStyle(fontSize:9,color:Color(0xFF777A70),fontWeight:FontWeight.w800)),const SizedBox(height:3),Text(v,maxLines:1,overflow:TextOverflow.ellipsis,style:const TextStyle(fontWeight:FontWeight.w900,fontSize:12,color:Color(0xFF202520)))])))));
   Widget _power(String icon,String label,int count,bool disabled,VoidCallback tap)=>Expanded(child:FilledButton.tonal(onPressed:disabled?null:tap,style:FilledButton.styleFrom(padding:const EdgeInsets.symmetric(vertical:7),backgroundColor:const Color(0xFFFFE7A4),foregroundColor:const Color(0xFF26143B),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(13))),child:Column(children:[Text(icon,style:const TextStyle(fontSize:21)),Text(label,style:const TextStyle(fontSize:11,fontWeight:FontWeight.w800)),Text(count.toString()+' left',style:const TextStyle(fontSize:10))])));
 }
