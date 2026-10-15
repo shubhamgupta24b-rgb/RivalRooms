@@ -70,36 +70,78 @@ class _HomeScreenState extends State<HomeScreen> {
     ]),
   );
  }
- Widget _home()=>ListView(padding:const EdgeInsets.fromLTRB(20,8,20,28),children:[
-  const Text('GOOD GAMES. GREAT COMPANY.',style:TextStyle(fontSize:11,letterSpacing:1.5,fontWeight:FontWeight.w800,color:muted)),
-  const SizedBox(height:8),
-  const Text('Who’s your\nnext rival?',style:TextStyle(fontSize:38,height:1.05,fontWeight:FontWeight.w900,letterSpacing:-1.7,color:ink)),
-  const SizedBox(height:18),
-  Container(padding:const EdgeInsets.all(20),decoration:BoxDecoration(color:green,borderRadius:BorderRadius.circular(24)),
-   child:Row(children:[const Expanded(child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-    Text('MAKE IT A MATCH',style:TextStyle(color:Color(0xFFD8E3D1),fontSize:10,fontWeight:FontWeight.w800,letterSpacing:1.4)),
-    SizedBox(height:8),Text('Play with friends\nwherever they are.',style:TextStyle(color:Colors.white,fontWeight:FontWeight.w800,fontSize:21,height:1.2)),
-    SizedBox(height:15),
-   ])),Container(width:74,height:84,decoration:BoxDecoration(color:Color(0xFF5D805F),borderRadius:BorderRadius.circular(20)),child:const Center(child:Text('🏆',style:TextStyle(fontSize:42))))]),
-  SizedBox(height:0),
-  FilledButton.icon(onPressed:()=>setState(()=>tab=1),icon:const Icon(Icons.group_add_rounded),label:const Text('Create or join a room'),style:FilledButton.styleFrom(backgroundColor:coral,foregroundColor:ink,minimumSize:const Size.fromHeight(52),shape:RoundedRectangleBorder(borderRadius:BorderRadius.circular(15)))),
-  const SizedBox(height:26),
-  _sectionTitle('Pick up and play','See all',()=>setState(()=>tab=2)),
-  const SizedBox(height:12),
-  SizedBox(height:174,child:ListView.separated(scrollDirection:Axis.horizontal,itemCount:3,separatorBuilder:(_,__)=>const SizedBox(width:12),itemBuilder:(c,i){
-   final g=games[i];return SizedBox(width:164,child:InkWell(borderRadius:BorderRadius.circular(20),onTap:()=>openGame(g),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:g.color,borderRadius:BorderRadius.circular(20)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
-    Align(alignment:Alignment.topRight,child:Text(g.emoji,style:const TextStyle(fontSize:39))),
-    const Spacer(),Text(g.title,style:const TextStyle(fontWeight:FontWeight.w900,fontSize:17,color:ink)),const SizedBox(height:4),Text(g.subtitle,style:const TextStyle(fontSize:11,color:ink)),
-   ])));})),
-  const SizedBox(height:26),_sectionTitle('Play your way',null,null),const SizedBox(height:12),
-  Row(children:[
-   Expanded(child:_modeTile('Online','Friends anywhere',Icons.public_rounded,green,()=>setState(()=>tab=1))),
-   const SizedBox(width:10),
-   Expanded(child:_modeTile('Same room','Pass and play',Icons.phonelink_rounded,coral,()=>setState(()=>tab=2))),
-  ]),
-  const SizedBox(height:20),
-  const Text('More games are on the way.',style:TextStyle(color:muted,fontSize:12)),
- ]);
+ Widget _home() => ListView(
+  padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
+  children: [
+    const Text('GOOD GAMES. GREAT COMPANY.', style: TextStyle(fontSize: 11, letterSpacing: 1.5, fontWeight: FontWeight.w800, color: muted)),
+    const SizedBox(height: 8),
+    const Text('Who’s your\\nnext rival?', style: TextStyle(fontSize: 38, height: 1.05, fontWeight: FontWeight.w900, letterSpacing: -1.7, color: ink)),
+    const SizedBox(height: 18),
+    Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(color: green, borderRadius: BorderRadius.circular(24)),
+      child: Row(children: [
+        const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text('MAKE IT A MATCH', style: TextStyle(color: Color(0xFFD8E3D1), fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.4)),
+          SizedBox(height: 8),
+          Text('Play with friends\\nwherever they are.', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 21, height: 1.2)),
+          SizedBox(height: 15),
+        ])),
+        Container(width: 74, height: 84, decoration: BoxDecoration(color: Color(0xFF5D805F), borderRadius: BorderRadius.circular(20)),
+          child: const Center(child: Text('🏆', style: TextStyle(fontSize: 42)))),
+      ]),
+    ),
+    const SizedBox(height: 12),
+    FilledButton.icon(
+      onPressed: () => setState(() => tab = 1),
+      icon: const Icon(Icons.group_add_rounded),
+      label: const Text('Create or join a room'),
+      style: FilledButton.styleFrom(backgroundColor: coral, foregroundColor: ink, minimumSize: const Size.fromHeight(52), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+    ),
+    const SizedBox(height: 26),
+    _sectionTitle('Pick up and play', 'See all', () => setState(() => tab = 2)),
+    const SizedBox(height: 12),
+    SizedBox(
+      height: 174,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        separatorBuilder: (_, __) => const SizedBox(width: 12),
+        itemBuilder: (context, i) {
+          final g = games[i];
+          return SizedBox(
+            width: 164,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(20),
+              onTap: () => openGame(g),
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(color: g.color, borderRadius: BorderRadius.circular(20)),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Align(alignment: Alignment.topRight, child: Text(g.emoji, style: const TextStyle(fontSize: 39))),
+                  const Spacer(),
+                  Text(g.title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17, color: ink)),
+                  const SizedBox(height: 4),
+                  Text(g.subtitle, style: const TextStyle(fontSize: 11, color: ink)),
+                ]),
+              ),
+            ),
+          );
+        },
+      ),
+    ),
+    const SizedBox(height: 26),
+    _sectionTitle('Play your way', null, null),
+    const SizedBox(height: 12),
+    Row(children: [
+      Expanded(child: _modeTile('Online', 'Friends anywhere', Icons.public_rounded, green, () => setState(() => tab = 1))),
+      const SizedBox(width: 10),
+      Expanded(child: _modeTile('Same room', 'Pass and play', Icons.phonelink_rounded, coral, () => setState(() => tab = 2))),
+    ]),
+    const SizedBox(height: 20),
+    const Text('More games are on the way.', style: TextStyle(color: muted, fontSize: 12)),
+  ],
+ );
  Widget _sectionTitle(String title,String? action,VoidCallback? onTap)=>Row(children:[Expanded(child:Text(title,style:const TextStyle(fontWeight:FontWeight.w900,fontSize:19,letterSpacing:-.4,color:ink))),if(action!=null)TextButton(onPressed:onTap,child:Text(action))]);
  Widget _modeTile(String title,String subtitle,IconData icon,Color color,VoidCallback tap)=>InkWell(onTap:tap,borderRadius:BorderRadius.circular(18),child:Container(padding:const EdgeInsets.all(15),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(18)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[Icon(icon,color:color,size:27),const SizedBox(height:14),Text(title,style:const TextStyle(fontWeight:FontWeight.w800,fontSize:16)),const SizedBox(height:3),Text(subtitle,style:const TextStyle(color:muted,fontSize:11))])));
  Widget _online()=>ListView(padding:const EdgeInsets.all(20),children:[
