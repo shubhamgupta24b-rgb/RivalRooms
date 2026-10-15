@@ -71,7 +71,7 @@ class _ChickenJumpGameState extends State<ChickenJumpGame> {
           _score++;
           if (_score > _best) _best = _score;
         }
-        if (_obstacleX < -0.01 && _obstacleX > -0.11 && _chickenY > -0.09) {
+        if (_obstacleX < 0.20 && _obstacleX > 0.08 && _chickenY > -0.09) {
           _running = false;
           _gameOver = true;
           _timer?.cancel();
