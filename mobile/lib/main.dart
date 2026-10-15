@@ -51,6 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const FruitCutGame()));
    } else if (game.title=='Basketball Hoops') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const BasketballGame()));
+   } else if (game.title=='Guess the Person') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const GuessPersonGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
@@ -181,6 +183,62 @@ class _MemoryGameState extends State<MemoryGame> {
   if(open.length==2){setState(()=>moves++);final pair=open.toList();if(cards[pair[0]]==cards[pair[1]]){setState(()=>matched.addAll(pair));await Future<void>.delayed(const Duration(milliseconds:250));if(matched.length==cards.length&&mounted){showDialog<void>(context:context,builder:(c)=>AlertDialog(title:const Text('Perfect match!'),content:Text('You finished in $moves moves.'),actions:[TextButton(onPressed:(){Navigator.pop(c);setState(_reset);},child:const Text('Play again'))]));}}else{busy=true;await Future<void>.delayed(const Duration(milliseconds:700));if(mounted)setState(()=>open.clear());busy=false;}}
  }
  @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Memory Match',style:TextStyle(fontWeight:FontWeight.w800)),actions:[IconButton(tooltip:'Restart',onPressed:()=>setState(_reset),icon:const Icon(Icons.refresh_rounded))]),body:SafeArea(child:Padding(padding:const EdgeInsets.all(18),child:Column(children:[Row(children:[const Expanded(child:Text('Find every pair.',style:TextStyle(fontSize:25,fontWeight:FontWeight.w900))),Container(padding:const EdgeInsets.symmetric(horizontal:14,vertical:9),decoration:BoxDecoration(color:Colors.white,borderRadius:BorderRadius.circular(14)),child:Text('Moves  $moves',style:const TextStyle(fontWeight:FontWeight.w800)))]),const SizedBox(height:20),Expanded(child:GridView.builder(itemCount:cards.length,gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:4,crossAxisSpacing:9,mainAxisSpacing:9,childAspectRatio:.78),itemBuilder:(context,i){final revealed=open.contains(i)||matched.contains(i);return Semantics(button:true,label:revealed?cards[i]:'Hidden card',child:InkWell(onTap:()=>_tap(i),borderRadius:BorderRadius.circular(14),child:AnimatedContainer(duration:const Duration(milliseconds:160),decoration:BoxDecoration(color:revealed?const Color(0xFFE6E9DE):green,borderRadius:BorderRadius.circular(14),border:Border.all(color:matched.contains(i)?green:Colors.transparent,width:2)),child:Center(child:Text(revealed?cards[i]:'✦',style:TextStyle(fontSize:revealed?30:25,color:revealed?ink:Colors.white,fontWeight:FontWeight.w900))))));})),const SizedBox(height:8),Text('${matched.length~/2} of ${cards.length~/2} pairs found',style:const TextStyle(color:muted,fontWeight:FontWeight.w700)),const SizedBox(height:10)]))));
+}
+
+
+class GuessPersonGame extends StatefulWidget {
+  const GuessPersonGame({super.key});
+  @override State<GuessPersonGame> createState() => _GuessPersonGameState();
+}
+class _GuessPersonGameState extends State<GuessPersonGame> {
+  static const rounds = <({String clue, List<String> options, String answer})>[
+    (clue: 'I paint the Mona Lisa and studied anatomy, engineering, and flight.', options: ['Vincent van Gogh', 'Leonardo da Vinci', 'Pablo Picasso', 'Claude Monet'], answer: 'Leonardo da Vinci'),
+    (clue: 'I developed the theory of relativity and won the Nobel Prize in Physics.', options: ['Isaac Newton', 'Niels Bohr', 'Albert Einstein', 'Galileo Galilei'], answer: 'Albert Einstein'),
+    (clue: 'I wrote the Harry Potter books.', options: ['J. R. R. Tolkien', 'Jane Austen', 'Agatha Christie', 'J. K. Rowling'], answer: 'J. K. Rowling'),
+    (clue: 'I led India’s non-violent independence movement and was known as Mahatma.', options: ['Sardar Patel', 'Jawaharlal Nehru', 'Mahatma Gandhi', 'B. R. Ambedkar'], answer: 'Mahatma Gandhi'),
+    (clue: 'I was the first person to walk on the Moon in 1969.', options: ['Buzz Aldrin', 'Yuri Gagarin', 'Neil Armstrong', 'Michael Collins'], answer: 'Neil Armstrong'),
+  ];
+  int index = 0, score = 0;
+  String? selected;
+  bool finished = false;
+  void _answer(String value) {
+    if (selected != null || finished) return;
+    setState(() { selected = value; if (value == rounds[index].answer) score += 100; });
+  }
+  void _next() {
+    if (index == rounds.length - 1) { setState(() => finished = true); return; }
+    setState(() { index++; selected = null; });
+  }
+  void _restart() => setState(() { index = 0; score = 0; selected = null; finished = false; });
+  @override Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(leading: IconButton(tooltip: 'Back', icon: const Icon(Icons.arrow_back_rounded), onPressed: () => Navigator.maybePop(context)), title: const Text('Guess the Person', style: TextStyle(fontWeight: FontWeight.w800))),
+    body: SafeArea(child: Padding(padding: const EdgeInsets.all(20), child: finished
+      ? Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Text('ROUND COMPLETE', style: TextStyle(color: muted, fontWeight: FontWeight.w800, letterSpacing: 1.4)),
+          const SizedBox(height: 12), Text('$score / 500', style: const TextStyle(fontSize: 42, fontWeight: FontWeight.w900, color: ink)),
+          const SizedBox(height: 8), const Text('Nice work. Ready for another round?', style: TextStyle(color: muted)),
+          const SizedBox(height: 22), FilledButton(onPressed: _restart, child: const Text('Play again')),
+        ]))
+      : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [Text('ROUND ${index + 1} OF ${rounds.length}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1.2)), const Spacer(), Text('$score PTS', style: const TextStyle(fontWeight: FontWeight.w900, color: green))]),
+          const SizedBox(height: 18),
+          Container(width: double.infinity, padding: const EdgeInsets.all(22), decoration: BoxDecoration(color: const Color(0xFFDAD6ED), borderRadius: BorderRadius.circular(24)), child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text('WHO AM I?', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: ink)),
+            const SizedBox(height: 12), Text(rounds[index].clue, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, height: 1.25, color: ink)),
+          ])),
+          const SizedBox(height: 20),
+          const Text('Choose your answer', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 10),
+          ...rounds[index].options.map((option) {
+            final isAnswer = option == rounds[index].answer;
+            final isSelected = option == selected;
+            final color = selected == null ? Colors.white : isAnswer ? const Color(0xFFD4E4C8) : isSelected ? const Color(0xFFF0D1CB) : Colors.white;
+            return Padding(padding: const EdgeInsets.only(bottom: 9), child: Material(color: color, borderRadius: BorderRadius.circular(15), child: InkWell(onTap: () => _answer(option), borderRadius: BorderRadius.circular(15), child: Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: isSelected ? green : const Color(0xFFE4E2D9))), child: Row(children: [Expanded(child: Text(option, style: const TextStyle(fontWeight: FontWeight.w700))), if (selected != null && isAnswer) const Icon(Icons.check_circle_rounded, color: green), if (isSelected && !isAnswer) const Icon(Icons.close_rounded, color: coral)]))));
+          }),
+          const Spacer(),
+          if (selected != null) SizedBox(width: double.infinity, child: FilledButton(onPressed: _next, child: Text(index == rounds.length - 1 ? 'See results' : 'Next clue'))),
+        ]))),
+  );
 }
 
 class SettingsScreen extends StatelessWidget { const SettingsScreen({super.key}); @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(leading:IconButton(icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Settings')),body:ListView(padding:const EdgeInsets.all(20),children:const[Card(child:ListTile(leading:Icon(Icons.volume_up_outlined),title:Text('Sound'),subtitle:Text('Sound settings will be added with game preferences.'))),Card(child:ListTile(leading:Icon(Icons.privacy_tip_outlined),title:Text('Privacy policy'),subtitle:Text('Privacy information belongs here in Settings.'))),SizedBox(height:14),Text('RivalRooms • Early build',style:TextStyle(color:muted))])); }
