@@ -34,19 +34,29 @@ Every iteration must:
 | Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Not started | Not run | Four explicit entry modes; compact game previews; Privacy Policy stays in Settings |
 | Basketball Hoops | Not started | Not started | Not run | Preserve shot action, score, round phase, timer and server synchronization |
 | Fruit Cut | Not started | Not started | Not run | Preserve slash action, fruit ID/lane, score/phase/timer and server synchronization |
-| Settings | Not started | Not started | Not run | Privacy Policy lives here, not on Home |\n| In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Not started | Not run | Visible 48 dp back control; confirm leaving active online matches; system Back matches visible Back; preserve room/game state |
+| Settings | Not started | Not started | Not run | Privacy Policy lives here, not on Home |
+| In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Not started | Not run | Visible 48 dp back control; confirm leaving active online matches; system Back matches visible Back; preserve room/game state |
 | Game-selection/detail screens beyond the above | Not started | Not started | Not run | Add each screen/game to this table before working on it to prevent repeats |
 
-## This iteration
+## Previous iteration
 - **Principle:** progressive disclosure and clear mode hierarchy. Put the four main play paths first; keep account/settings/records secondary; keep Privacy Policy inside Settings.
 - **Applied to:** Home / game-selection screen.
 - **Artifact:** `docs/design/HOME_SCREEN_SPEC.md`.
-- **Code changes:** none; this repository still needs the Flutter project source.
-- **Tests/build/deployment:** not run; no application source is present in this repository.
+- **Code changes:** specification only; Flutter source is not present in this repository.
+- **Tests/build/deployment:** not run.
+
+## Current iteration — In-game Back / Exit
+- **Principle:** prevent errors through clear, reversible navigation and informed confirmation.
+- **Applied to:** shared in-game header and exit confirmation flow.
+- **Artifact:** `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md`.
+- **Design change:** every game gets a clear top-left Back control; active online matches require explicit confirmation before leaving; Android system Back follows the same policy.
+- **Code changes:** specification only; no Flutter source is present to implement it yet.
+- **Tests/build/deployment:** not run.
 
 ## Next work
 1. Bring the necessary Flutter app and server source into this repository without modifying the old repository.
 2. Reconcile the Home spec with the real navigation and catalogue; preserve existing behavior and never display a fake connected/match state.
 3. Implement and validate Home.
-4. Design Basketball Hoops next, then Fruit Cut, recording each separately here.
-5. Only after source and environment configuration are present, run Flutter tests/build and inspect Render deployment health.
+4. Implement the shared Back / Exit behavior across games without breaking online room lifecycle.
+5. Design Basketball Hoops next, then Fruit Cut, recording each separately here.
+6. Only after source and environment configuration are present, run Flutter tests/build and inspect Render deployment health.
