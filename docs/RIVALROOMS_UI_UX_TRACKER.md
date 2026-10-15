@@ -7,7 +7,7 @@ Last updated: 2026-10-15
 - The previous `Two-player-online` repository is a read-only reference for existing flows and game logic; do not modify it.
 - Initial state on 2026-10-15 was docs-only. A starter Flutter app and a partial Node.js multiplayer server migration have now been committed to RivalRooms.
 - The old `Two-player-online` repository remains read-only. The current Flutter starter is not yet connected to the migrated server; most existing game implementations and assets have not been migrated.
-- Flutter/Node tests, builds, and deployment have not been run from this environment; do not treat the current scaffold as release-ready.
+- Latest verified GitHub Actions run before the current Guess the Person change: Flutter `pub get`, `analyze`, and `test` passed; Node `npm ci` and `npm test` passed (run `38688610889`, commit `261dba5357c3dcb68f467cf8d96dad7a8210377a`). The newest Guess the Person change still needs its own CI run; no release build or deployment has been verified.
 
 ## Research status
 - [x] Apple Human Interface Guidelines — designing for games: fast entry to play, readable text, responsive layouts, accessible controls, do not rely on color alone.
@@ -33,13 +33,13 @@ Every iteration must:
 | Item | Design/spec | Implementation | Validation | Notes |
 |---|---|---|---|---|
 | Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Starter implementation in `mobile/lib/main.dart` | CI rerun pending after widget-tree fix | Home, Play online, All games navigation; clean earthy palette; Privacy Policy is only referenced in Settings |
-| Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Local tap-to-shoot prototype in `mobile/lib/main.dart` | CI rerun pending | Primary Shoot action; preserve timing, score, phase and server updates |
-| Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Local timed tap-to-slice prototype in `mobile/lib/main.dart` | CI rerun pending | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
+| Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Local tap-to-shoot prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | Primary Shoot action; preserve timing, score, phase and server updates |
+| Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Local timed tap-to-slice prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
 | Settings | Not started | Starter implementation in `mobile/lib/main.dart` | Not run | Settings entry exists; privacy policy placeholder remains inside Settings |
 | In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Basic visible Back on prototype game screens | Not run | Active online match confirmation and Android Back policy are not implemented yet |
-| Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | CI rerun pending | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
+| Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
 | Maths Duel | `docs/design/MATHS_DUEL_SPEC.md` | Not started | Not run | One-question focus; preserve answer validation and timer |
-| Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Not started | Not run | Progressive hints; preserve hint order and scoring |
+| Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Local 5-round clue quiz in `mobile/lib/main.dart` (4 choices, scoring, feedback, restart) | CI pending for commit `207faa8` | Progressive hints; preserve hint order and scoring |
 | Pool | `docs/design/POOL_SPEC.md` | Not started | Not run | Separate aiming from shooting; preserve physics |
 | Connect Four | `docs/design/CONNECT_FOUR_SPEC.md` | Not started | Not run | Legal-move preview; preserve win detection and turns |
 | Battleship | `docs/design/BATTLESHIP_SPEC.md` | Not started | Not run | Separate targeting states; preserve hidden information |
@@ -63,6 +63,12 @@ Every iteration must:
 - **Code changes:** specification only; no Flutter source is present to implement it yet.
 - **Tests/build/deployment:** not run.
 
+## Implementation update — Guess the Person
+- **Principle:** keep each round focused on one readable clue and make answer feedback immediate.
+- **Code changes:** added a local five-round Guess the Person quiz with four choices per round, scoring, correct/incorrect feedback, next-clue flow, final score, restart, and visible Back.
+- **Commit:** `207faa8ae81195ecd70e9f455789a7d6546f7b38`.
+- **Validation:** CI has not yet run for this commit. The previous CI run passed Flutter analysis/tests and Node tests on `261dba5`.
+
 ## Implementation kickoff — Flutter starter and server migration
 - **Principle:** make the first playable path tangible while keeping multiplayer status honest.
 - **Flutter artifacts:** `mobile/pubspec.yaml`, `mobile/lib/main.dart`, `mobile/test/widget_test.dart`, `mobile/README.md`.
@@ -80,8 +86,8 @@ Every iteration must:
 - **Tests/build/deployment:** not run.
 
 ## Next work
-1. Migrate the required Flutter app and server source into this repository without modifying the old repository.
-2. Reconcile these specifications with actual game rules and navigation before implementation.
-3. Implement Home and shared Back / Exit behavior.
-4. Implement and validate Basketball Hoops, then Fruit Cut, while recording each completed item.
-5. Inspect Render only after the backend/configuration exists; never claim a deployment or build without validation.
+1. Verify CI for the Guess the Person implementation and correct any analyzer/test failures.
+2. Migrate the remaining existing Flutter source, assets, and tests from the read-only reference repository.
+3. Connect the Flutter client to the migrated Socket.IO room server; implement active-match exit confirmation and Android Back handling.
+4. Replace remaining placeholder game cards with real core loops, working in small batches and counting only tested playable games.
+5. Verify Render configuration, Android release build, and device tests only when the relevant steps actually run.
