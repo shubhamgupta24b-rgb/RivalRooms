@@ -51,7 +51,10 @@ The Flutter Play online tab still explains that room creation, joining, and quic
 - This session did not deploy to Render. Dashboard steps: Render → New → Blueprint → this repository, or New Web Service with root `server`, build `npm ci`, start `npm start`. Confirm `/health` on the live URL before calling it deployed.
 
 ### CI
-`.github/workflows/ci.yml` runs Flutter analyze/tests and server `npm test`. `.github/workflows/android-apk.yml` runs analyze, tests, `flutter build apk --debug`, and uploads `mobile/build/app/outputs/flutter-apk/app-debug.apk`. A GitHub Actions run link is recorded only after that workflow is pushed and observed.
+Observed on push `05852cf` (main):
+
+- CI succeeded: https://github.com/shubhamgupta24b-rgb/RivalRooms/actions/runs/38750995019 — Flutter analyze, Flutter tests, and server `npm test` all passed.
+- Build Android APK succeeded: https://github.com/shubhamgupta24b-rgb/RivalRooms/actions/runs/38750994960 — analyze, tests, and `flutter build apk --debug` passed. Artifact `rivalrooms-debug-apk` is 72,172,808 bytes (zip of `mobile/build/app/outputs/flutter-apk/app-debug.apk`), not expired, retained 14 days. Download it from that run.
 
 ### Remaining
 - Flutter Socket.IO client for create/join and one authoritative game, without replacing local play.
