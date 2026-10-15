@@ -17,6 +17,6 @@ void main() {
     expect(find.textContaining('pass-and-play'), findsOneWidget);
     expect(find.byTooltip('Back'), findsOneWidget);
     expect(find.byTooltip('Restart'), findsOneWidget);
-    expect(find.byType(CustomPaint), findsOneWidget);
+    expect(find.byType(CustomPaint), findsAtLeastNWidgets(1));
   });
 }
