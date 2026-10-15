@@ -25,8 +25,8 @@ void main() {
   });
 
   testWidgets('Fruit Cut level map provides 50 level slots and difficulties', (tester) async {
-    await tester.view.setPhysicalSize(const Size(430, 900));
-    await tester.view.setDevicePixelRatio(1);
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
