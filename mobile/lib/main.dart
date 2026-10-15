@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -337,7 +338,7 @@ class _SuikaPopGameState extends State<SuikaPopGame> with SingleTickerProviderSt
   @override Widget build(BuildContext context)=>Scaffold(
     appBar:AppBar(leading:IconButton(tooltip:'Back',icon:const Icon(Icons.arrow_back_rounded),onPressed:()=>Navigator.maybePop(context)),title:const Text('Suika Pop',style:TextStyle(fontWeight:FontWeight.w900)),actions:[IconButton(tooltip:'Aim line',onPressed:()=>setState(()=>showAim=!showAim),icon:Icon(showAim?Icons.gps_fixed_rounded:Icons.gps_not_fixed_rounded)),IconButton(tooltip:'Reset',onPressed:_reset,icon:const Icon(Icons.refresh_rounded))]),
     body:SafeArea(child:LayoutBuilder(builder:(context,box){
-      _width=box.maxWidth.clamp(260.0,520.0); _height=max(300.0,box.maxHeight-190); _aimX=_aimX.clamp(20,_width-20);
+      _width=box.maxWidth.clamp(260.0,520.0).toDouble(); _height=max(300.0,box.maxHeight-190).toDouble(); _aimX=_aimX.clamp(20,_width-20).toDouble();
       return Padding(padding:const EdgeInsets.fromLTRB(14,4,14,12),child:Column(children:[
         Row(children:[
           Expanded(child:_suikaStat('SCORE','$score')),
@@ -348,7 +349,7 @@ class _SuikaPopGameState extends State<SuikaPopGame> with SingleTickerProviderSt
         Expanded(child:Center(child:AspectRatio(aspectRatio:_width/_height,child:GestureDetector(
           behavior:HitTestBehavior.opaque,
           onTapDown:(d){_aimX=d.localPosition.dx;_drop();},
-          onPanUpdate:(d)=>setState(()=>_aimX=d.localPosition.dx.clamp(10,_width-10)),
+          onPanUpdate:(d)=>setState(()=>_aimX=d.localPosition.dx.clamp(10,_width-10).toDouble()),
           onPanEnd:(_)=>_drop(),
           child:ClipRRect(borderRadius:BorderRadius.circular(22),child:CustomPaint(
             painter:_SuikaPainter(fruits:fruits,width:_width,height:_height,aimX:_aimX,aimTier:currentTier,showAim:showAim,gameOver:gameOver,overflow:overflowFrames>0),
@@ -357,9 +358,9 @@ class _SuikaPopGameState extends State<SuikaPopGame> with SingleTickerProviderSt
         )))),
         const SizedBox(height:10),
         Row(children:[
-          Expanded(child:_powerButton('🫨','Shake jar',shakes,_shake)),
-          const SizedBox(width:8),Expanded(child:_powerButton('✨','Berry pop',pops,_pop)),
-          const SizedBox(width:8),Expanded(child:_powerButton('⬆️','Evo boost',boosts,_boost)),
+          _powerButton('🫨','Shake jar',shakes,_shake),
+          const SizedBox(width:8),_powerButton('✨','Berry pop',pops,_pop),
+          const SizedBox(width:8),_powerButton('⬆️','Evo boost',boosts,_boost),
         ]),
         const SizedBox(height:8),
         Text('Drop matching fruits to merge them into bigger ones.',style:TextStyle(color:muted,fontSize:12)),
