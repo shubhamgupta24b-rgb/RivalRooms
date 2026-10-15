@@ -1,6 +1,6 @@
 # RivalRooms Implementation Tracker
 
-Last updated: 2026-10-15 14:50 (Asia/Calcutta)
+Last updated: 2026-10-15 14:52 (Asia/Calcutta)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
 
@@ -27,8 +27,9 @@ Battleship and Pool are preview cards and are excluded. This count is based on s
 - Home/library integration commit: `af7df07a9433686c3bd1e376eb47afe3434259fd` — changed `mobile/lib/main.dart` to add the game card and route.
 - Callback syntax fix commit: `6539d3466f2a054c4f842f39a07737c365c77104` — corrected state update callbacks in `mobile/lib/games/candy_match3_game.dart`.
 - Widget tests commit: `ca842fd9bcdeec67abbd82a278ff1648cf062e65` — added `mobile/test/candy_match3_game_test.dart` for the board HUD, Back/levels/restart controls, power-up controls, and level-map/difficulty UI.
+- Follow-up test commit: `7290cb16e25913e41ef21b56d8a9fc3fe40b2ef1` — changed the level-map assertion to avoid assuming level 50 is visible without scrolling.
 - Implemented locally in source: 7×7 match-3 grid, adjacent-swap validation, horizontal/vertical match detection, cascading gravity/refill, score/move/goal loop, Easy/Medium/Hard, 50 level slots with per-difficulty unlock progression, hammer, shuffle, color bomb, restart, visible Back, and result dialog. Level progress is currently in-memory only and does not persist across app launches.
-- Validation actually run in this environment: repository/file inspection only. Flutter/Dart tests and analyzer have NOT been run here. Wait for GitHub Actions on the latest main commit before counting this as a verified playable game. Do not count Candy Match 3 in the playable total yet.
+- Validation actually run in this environment: repository/file inspection only. Flutter/Dart tests and analyzer have NOT been run here. GitHub Actions run `38712931841` was observed in progress for test commit `ca842fd9bcdeec67abbd82a278ff1648cf062e65`; it had not reached Flutter analysis/tests at last inspection. The viewport-safe follow-up test commit `7290cb16e25913e41ef21b56d8a9fc3fe40b2ef1` should trigger a newer run. Wait for CI on the latest main commit before counting this as a verified playable game. Do not count Candy Match 3 in the playable total yet.
 - Known gameplay caveat to check in CI/review: power-ups consume a move; ensure no analyzer/test failures and verify generated board always has a valid move. No device or Android build run.
 
 ## Latest code change
