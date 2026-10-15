@@ -5,8 +5,9 @@ Last updated: 2026-10-15
 ## Repository boundary
 - Design and implementation writes go only to [RivalRooms](https://github.com/shubhamgupta24b-rgb/RivalRooms).
 - The previous `Two-player-online` repository is a read-only reference for existing flows and game logic; do not modify it.
-- Current state at the start of this iteration: RivalRooms repository was empty. No Flutter source, tests, or Render configuration are present here yet.
-- This commit adds planning/specification only. It does not claim the app has been migrated, built, tested, or deployed.
+- Initial state on 2026-10-15 was docs-only. A starter Flutter app and a partial Node.js multiplayer server migration have now been committed to RivalRooms.
+- The old `Two-player-online` repository remains read-only. The current Flutter starter is not yet connected to the migrated server; most existing game implementations and assets have not been migrated.
+- Flutter/Node tests, builds, and deployment have not been run from this environment; do not treat the current scaffold as release-ready.
 
 ## Research status
 - [x] Apple Human Interface Guidelines — designing for games: fast entry to play, readable text, responsive layouts, accessible controls, do not rely on color alone.
@@ -31,12 +32,12 @@ Every iteration must:
 
 | Item | Design/spec | Implementation | Validation | Notes |
 |---|---|---|---|---|
-| Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Not started | Not run | Four explicit entry modes; compact game previews; Privacy Policy stays in Settings |
+| Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Starter implementation in `mobile/lib/main.dart` | Not run | Home, Play online, All games navigation; clean earthy palette; Privacy Policy is only referenced in Settings |
 | Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Not started | Not run | Primary Shoot action; preserve timing, score, phase and server updates |
 | Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Not started | Not run | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
-| Settings | Not started | Not started | Not run | Privacy Policy lives here, not on Home |
-| In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Not started | Not run | Visible 48 dp back control; confirm leaving active online matches; system Back matches visible Back; preserve room/game state |
-| Memory | `docs/design/MEMORY_GAME_SPEC.md` | Not started | Not run | Stable card grid; preserve pair/turn state |
+| Settings | Not started | Starter implementation in `mobile/lib/main.dart` | Not run | Settings entry exists; privacy policy placeholder remains inside Settings |
+| In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Basic visible Back on prototype game screens | Not run | Active online match confirmation and Android Back policy are not implemented yet |
+| Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | Not run | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
 | Maths Duel | `docs/design/MATHS_DUEL_SPEC.md` | Not started | Not run | One-question focus; preserve answer validation and timer |
 | Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Not started | Not run | Progressive hints; preserve hint order and scoring |
 | Pool | `docs/design/POOL_SPEC.md` | Not started | Not run | Separate aiming from shooting; preserve physics |
@@ -62,12 +63,20 @@ Every iteration must:
 - **Code changes:** specification only; no Flutter source is present to implement it yet.
 - **Tests/build/deployment:** not run.
 
+## Implementation kickoff — Flutter starter and server migration
+- **Principle:** make the first playable path tangible while keeping multiplayer status honest.
+- **Flutter artifacts:** `mobile/pubspec.yaml`, `mobile/lib/main.dart`, `mobile/test/widget_test.dart`, `mobile/README.md`.
+- **Implemented:** starter Home with Home / Play online / All games navigation, game cards, Settings entry, Privacy Policy kept in Settings, a local Memory Match prototype, restart, move counter, completion dialog, and basic visible Back controls on game screens.
+- **Server migration:** copied the Node server entry/config, room manager/store, socket handlers, game registry and game handlers, privacy page, package metadata, Render blueprint, and server tests into `server/`. This is a partial migration; verify missing dependencies/files before deployment.
+- **Not implemented yet:** Flutter socket/room integration, existing full game source/assets migration, active-match exit confirmation, and the remaining games. Online buttons currently show explanatory placeholders.
+- **Validation:** not run. No claim of successful Flutter analyze/test/build or Node test/deployment.
+
 ## Current iteration — First 10-game design batch
 - **Principle:** one strong gameplay hierarchy per game; controls and status are visible without clutter.
 - **Applied to:** Basketball Hoops, Fruit Cut, Memory, Maths Duel, Guess the Person, Pool, Connect Four, Battleship, MinesSwapper, and Ball Sort Cover. Added a supporting Multiplayer Room Lobby spec as a shared-flow screen.
 - **Artifacts:** individual specs under `docs/design/` listed in the coverage table above.
 - **Design constraints:** consistent top-left Back affordance; explicit leave confirmation for active online matches; blue/red identities with redundant cues; preserve gameplay mechanics, scores, timers, navigation and online synchronization.
-- **Code changes:** design specifications only. Flutter source has not been migrated into this repository, so implementation is not started.
+- **Code changes:** the design specs remain the implementation target; the first Flutter starter and partial server migration are now present as described above.
 - **Tests/build/deployment:** not run.
 
 ## Next work
