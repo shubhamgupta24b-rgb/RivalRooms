@@ -11,6 +11,7 @@ import 'games/pool_game.dart';
 import 'games/battleship_game.dart';
 import 'games/chicken_jump_game.dart';
 import 'games/carrom_game.dart';
+import 'games/bike_racing_game.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -51,6 +52,7 @@ const games = <GameInfo>[
  GameInfo('Candy Match 3','Match fruit, clear levels, use power-ups','🍬','Puzzle games',Color(0xFFE6D5F2)),
  GameInfo('Chicken Jump','Jump over obstacles and beat your best','🐔','Quick play',Color(0xFFF2D9A8)),
  GameInfo('Carrom','Aim your striker and pocket the coins','🟤','Board games',Color(0xFFE7C9A7)),
+ GameInfo('Bike Racing','Dodge traffic and beat your best','🏍️','Quick play',Color(0xFFD4E4C8)),
 ];
 
 class HomeScreen extends StatefulWidget {
@@ -86,6 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const ChickenJumpGame()));
    } else if (game.title=='Carrom') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const CarromGame()));
+   } else if (game.title=='Bike Racing') {
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const BikeRacingGame()));
    } else {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>GamePreview(game:game)));
    }
