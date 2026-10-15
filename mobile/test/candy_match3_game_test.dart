@@ -4,8 +4,8 @@ import 'package:rivalrooms/games/candy_match3_game.dart';
 
 void main() {
   testWidgets('Candy Match 3 renders a playable board and controls', (tester) async {
-    await tester.view.setPhysicalSize(const Size(430, 900));
-    await tester.view.setDevicePixelRatio(1);
+    tester.view.physicalSize = const Size(430, 900);
+    tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
