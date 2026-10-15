@@ -6,6 +6,7 @@ import 'games/hexa_ring_sort_game.dart';
 import 'games/maths_duel_game.dart';
 import 'games/connect_four_game.dart';
 import 'games/candy_match3_game.dart';
+import 'games/fruit_cut_arcade_game.dart';
 
 void main() => runApp(const RivalRoomsApp());
 
@@ -56,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
    if(game.title=='Memory Match') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const MemoryGame()));
    } else if (game.title=='Fruit Cut') {
-     Navigator.push(context,MaterialPageRoute(builder:(_)=>const FruitCutGame()));
+     Navigator.push(context,MaterialPageRoute(builder:(_)=>const FruitCutArcadeGame()));
    } else if (game.title=='Basketball Hoops') {
      Navigator.push(context,MaterialPageRoute(builder:(_)=>const BasketballGame()));
    } else if (game.title=='Guess the Person') {
