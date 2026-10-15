@@ -231,7 +231,30 @@ class _GuessPersonGameState extends State<GuessPersonGame> {
         final correct = option == person.answer;
         final chosen = option == selected;
         final background = selected == null ? Colors.white : correct ? const Color(0xFFD4E4C8) : chosen ? const Color(0xFFF0D1CB) : Colors.white;
-        return Padding(padding: const EdgeInsets.only(bottom: 9), child: Material(color: background, borderRadius: BorderRadius.circular(15), child: InkWell(onTap: selected == null ? () => setState(() => selected = option) : null, borderRadius: BorderRadius.circular(15), child: Container(width: double.infinity, padding: const EdgeInsets.all(16), decoration: BoxDecoration(borderRadius: BorderRadius.circular(15), border: Border.all(color: chosen ? green : const Color(0xFFE4E2D9))), child: Row(children: [Expanded(child: Text(option, style: const TextStyle(fontWeight: FontWeight.w700))), if (selected != null && correct) const Icon(Icons.check_circle_rounded, color: green), if (chosen && !correct) const Icon(Icons.close_rounded, color: coral)]))));
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 9),
+          child: Material(
+            color: background,
+            borderRadius: BorderRadius.circular(15),
+            child: InkWell(
+              onTap: selected == null ? () => setState(() => selected = option) : null,
+              borderRadius: BorderRadius.circular(15),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: chosen ? green : const Color(0xFFE4E2D9)),
+                ),
+                child: Row(children: [
+                  Expanded(child: Text(option, style: const TextStyle(fontWeight: FontWeight.w700))),
+                  if (selected != null && correct) const Icon(Icons.check_circle_rounded, color: green),
+                  if (chosen && !correct) const Icon(Icons.close_rounded, color: coral),
+                ]),
+              ),
+            ),
+          ),
+        );
       }),
       if (selected != null) ...[
         const SizedBox(height: 4),
