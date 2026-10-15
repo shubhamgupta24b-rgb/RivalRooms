@@ -1,0 +1,103 @@
+# RivalRooms UI/UX Iteration Tracker
+
+Last updated: 2026-10-15
+
+## Repository boundary
+- Design and implementation writes go only to [RivalRooms](https://github.com/shubhamgupta24b-rgb/RivalRooms).
+- The previous `Two-player-online` repository is a read-only reference for existing flows and game logic; do not modify it.
+- Initial state on 2026-10-15 was docs-only. A starter Flutter app and a partial Node.js multiplayer server migration have now been committed to RivalRooms.
+- The old `Two-player-online` repository remains read-only. The current Flutter starter is not yet connected to the migrated server; most existing game implementations and assets have not been migrated.
+- Latest verified GitHub Actions run before the current Guess the Person change: Flutter `pub get`, `analyze`, and `test` passed; Node `npm ci` and `npm test` passed (run `38688610889`, commit `261dba5357c3dcb68f467cf8d96dad7a8210377a`). The newest Guess the Person change still needs its own CI run; no release build or deployment has been verified.
+
+## Research status
+- [x] Apple Human Interface Guidelines — designing for games: fast entry to play, readable text, responsive layouts, accessible controls, do not rely on color alone.
+- [x] Apple Human Interface Guidelines — game controls: direct manipulation when appropriate, thumb-reachable controls, visible press feedback, avoid unnecessary controls over the play area.
+- [x] Material Design accessibility: target at least 48 × 48 dp with about 8 dp spacing.
+- [x] Google Playables design best practices: responsive sizing, legible contrast, clear button states, concise onboarding and clear pause/end states.
+
+References:
+- https://developer.apple.com/design/human-interface-guidelines/designing-for-games/
+- https://developer.apple.com/design/human-interface-guidelines/game-controls
+- https://m1.material.io/usability/accessibility.html
+- https://developers.google.com/youtube/gaming/playables/certification/best_practices_design
+
+## Iteration rule
+Every iteration must:
+1. Select one specific UI/UX principle.
+2. Apply it to a screen/game not already covered.
+3. record a concrete specification or implementation artifact.
+4. Track changed files and actual validation separately; never mark a build/test/deployment as successful without running it.
+
+## Screen/game coverage
+
+| Item | Design/spec | Implementation | Validation | Notes |
+|---|---|---|---|---|
+| Home / game-selection screen | Spec written in `docs/design/HOME_SCREEN_SPEC.md` | Starter implementation in `mobile/lib/main.dart` | CI rerun pending after widget-tree fix | Home, Play online, All games navigation; clean earthy palette; Privacy Policy is only referenced in Settings |
+| Basketball Hoops | `docs/design/BASKETBALL_HOOPS_SPEC.md` | Local tap-to-shoot prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | Primary Shoot action; preserve timing, score, phase and server updates |
+| Fruit Cut | `docs/design/FRUIT_CUT_SPEC.md` | Local timed tap-to-slice prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | Swipe-first layout; preserve fruit ID/lane, score, phase and server updates |
+| Suika Pop | Added from the supplied HTML game's mechanics and art direction | Native Flutter fruit-merge game in `mobile/lib/main.dart`: 11 fruit tiers, drop/aim controls, merge scoring, next-fruit preview, overflow game-over, shake/pop/boost power-ups, reset and Back | CI pending for commit `3e89504` |\n| Settings | Not started | Starter implementation in `mobile/lib/main.dart` | Not run | Settings entry exists; privacy policy placeholder remains inside Settings |
+| In-game Back / Exit navigation | Spec written in `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md` | Basic visible Back on prototype game screens | Not run | Active online match confirmation and Android Back policy are not implemented yet |
+| Memory | `docs/design/MEMORY_GAME_SPEC.md` | Local playable prototype in `mobile/lib/main.dart` | CI passed on `261dba5`; rerun after latest commit | 16 cards, pair matching, move count, restart, completion dialog; not online-synchronized |
+| Maths Duel | `docs/design/MATHS_DUEL_SPEC.md` | Not started | Not run | One-question focus; preserve answer validation and timer |
+| Guess the Person | `docs/design/GUESS_PERSON_SPEC.md` | Single-question clue round with four choices, answer feedback, and Next person to start a fresh round | CI pending for latest game commit | Progressive hints; preserve hint order and scoring |
+| Pool | `docs/design/POOL_SPEC.md` | Not started | Not run | Separate aiming from shooting; preserve physics |
+| Connect Four | `docs/design/CONNECT_FOUR_SPEC.md` | Not started | Not run | Legal-move preview; preserve win detection and turns |
+| Battleship | `docs/design/BATTLESHIP_SPEC.md` | Not started | Not run | Separate targeting states; preserve hidden information |
+| MinesSwapper | `docs/design/MINES_SWAPPER_SPEC.md` | Not started | Not run | Clear level/difficulty; preserve progression |
+| Ball Sort Cover | `docs/design/BALL_SORT_COVER_SPEC.md` | Not started | Not run | Redundant color/state cues; preserve puzzle rules |
+| Multiplayer Room Lobby | `docs/design/MULTIPLAYER_LOBBY_SPEC.md` | Not started | Not run | Real connection/readiness states only |
+| Game-selection/detail screens beyond the above | Not started | Not started | Not run | Add each screen/game to this table before working on it to prevent repeats |
+
+## Previous iteration
+- **Principle:** progressive disclosure and clear mode hierarchy. Put the four main play paths first; keep account/settings/records secondary; keep Privacy Policy inside Settings.
+- **Applied to:** Home / game-selection screen.
+- **Artifact:** `docs/design/HOME_SCREEN_SPEC.md`.
+- **Code changes:** specification only; Flutter source is not present in this repository.
+- **Tests/build/deployment:** not run.
+
+## Previous iteration — In-game Back / Exit
+- **Principle:** prevent errors through clear, reversible navigation and informed confirmation.
+- **Applied to:** shared in-game header and exit confirmation flow.
+- **Artifact:** `docs/design/IN_GAME_EXIT_NAVIGATION_SPEC.md`.
+- **Design change:** every game gets a clear top-left Back control; active online matches require explicit confirmation before leaving; Android system Back follows the same policy.
+- **Code changes:** specification only; no Flutter source is present to implement it yet.
+- **Tests/build/deployment:** not run.
+
+## Implementation update — Suika Pop\n- **Source:** user-provided `gemini-code-1792043545598.html`, a fruit-merging game with 11 tiers, aim/drop controls, merging, score/best score, overflow game-over, and three power-ups.\n- **Code changes:** added a native Flutter implementation and home/library game card; no WebView dependency required. Includes fruit tier evolution, next-fruit preview, score, aim guide, tap-to-drop, physics/collisions/merging, shake jar, berry pop, evolution boost, restart, game-over overlay, and visible Back.\n- **Commits:** `788be4b2011d5a08db432772f259169ea7c566fc` (implementation), `3e89504fe9a106442701752b47e4003e7de4ce5a` (layout/type fix).\n- **Validation:** CI has not yet completed for the new implementation; do not count as verified until Flutter analysis/tests pass.\n\n## Implementation update — Guess the Person
+- **Principle:** one clue and one decision per round, with immediate, unambiguous feedback.
+- **Code changes:** replaced the multi-question sequence with a single-question round, four answer choices, correct/incorrect feedback, a Next person action that starts a fresh question, and visible Back.
+- **Commit:** `e5aea3849ef0dacec45e62b9a558f94046294949`.
+- **Validation:** CI is pending for this commit; previous CI passed Flutter analysis/tests and Node tests on `261dba5`.
+
+## Implementation kickoff — Flutter starter and server migration
+- **Principle:** make the first playable path tangible while keeping multiplayer status honest.
+- **Flutter artifacts:** `mobile/pubspec.yaml`, `mobile/lib/main.dart`, `mobile/test/widget_test.dart`, `mobile/README.md`.
+- **Implemented:** starter Home with Home / Play online / All games navigation, game cards, Settings entry, Privacy Policy kept in Settings, playable local Memory Match, timed Fruit Cut and Basketball Hoops prototypes, restart/score/timer feedback, completion state for Fruit Cut/Basketball, and basic visible Back controls on game screens.
+- **Server migration:** copied the Node server entry/config, room manager/store, socket handlers, game registry and game handlers, privacy page, package metadata, Render blueprint, and server tests into `server/`. This is a partial migration; verify missing dependencies/files before deployment.
+- **Not implemented yet:** Flutter socket/room integration, authoritative server synchronization, existing full game source/assets migration, active-match exit confirmation, and the remaining games. Online buttons currently show explanatory placeholders; the local basketball prototype is tap-based rather than physics/shoot-payload parity.
+- **Validation:** not run. No claim of successful Flutter analyze/test/build or Node test/deployment.
+
+## Current iteration — First 10-game design batch
+- **Principle:** one strong gameplay hierarchy per game; controls and status are visible without clutter.
+- **Applied to:** Basketball Hoops, Fruit Cut, Memory, Maths Duel, Guess the Person, Pool, Connect Four, Battleship, MinesSwapper, and Ball Sort Cover. Added a supporting Multiplayer Room Lobby spec as a shared-flow screen.
+- **Artifacts:** individual specs under `docs/design/` listed in the coverage table above.
+- **Design constraints:** consistent top-left Back affordance; explicit leave confirmation for active online matches; blue/red identities with redundant cues; preserve gameplay mechanics, scores, timers, navigation and online synchronization.
+- **Code changes:** the design specs remain the implementation target; the first Flutter starter and partial server migration are now present as described above.
+- **Tests/build/deployment:** not run.
+
+## Next work
+1. Verify CI for the latest Suika Pop and Guess the Person commits; correct any analyzer/test failures.
+2. Migrate the remaining existing Flutter source, assets, and tests from the read-only reference repository.
+3. Connect the Flutter client to the migrated Socket.IO room server; implement active-match exit confirmation and Android Back handling.
+4. Replace remaining placeholder game cards with real core loops, working in small batches and counting only tested playable games.
+5. Verify Render configuration, Android release build, and device tests only when the relevant steps actually run.
+
+
+## Implementation update — Hexa Ring Sort, Maths Duel, and Connect Four routing (2026-10-15)
+- **Hexa Ring Sort:** added `mobile/lib/games/hexa_ring_sort_game.dart` with 50 level progression, Easy/Medium/Hard modes, stack moves, undo, hints, restart, and a level-complete flow; wired it into the game library in `mobile/lib/main.dart`.
+- **Maths Duel:** added `mobile/lib/games/maths_duel_game.dart` with local pass-and-play, 10 rounds, alternating players, generated arithmetic questions, multiple-choice answers, scores, restart, and end-of-match result; wired into the game library.
+- **Connect Four:** the native game screen and deterministic logic already existed under `mobile/lib/games/` but were not reachable from the current game-library routing. Added an explicit route from the Connect Four card.
+- **Commits:** Hexa Ring Sort `c1924da59a42047f6a9a8e72084ade6d6674852f`, library integration `22d545657129272298bf3feb6226d6abaece1c6`, syntax fix `3f19aebba56b8c8342ce368de2703ed930bfac70`; Maths Duel `e0600db57f0078a62e469ecceb70968ba8a6d998`, library integration `e6ab6e98b6d12c8c927c8a82f926854266bf0181`; Connect Four route `e2cb002d098d6ebe722209fdc3bab073454a796f`.
+- **Validation:** the initial Hexa Ring Sort commits failed Flutter analysis because of malformed widget syntax. A fix was committed and CI was running at the time of this update. Maths Duel and Connect Four route CI runs were queued/in progress; no passing status is claimed yet. Server Node tests passed on the earlier Hexa Ring Sort library commit.
+- **Known limitation:** Hexa Ring Sort level generation and solvability need gameplay validation; level progress is session-only. Maths Duel is local pass-and-play, not online synchronized yet. Connect Four route is now reachable but its existing screen UI still needs polish and draw/turn messaging review.
+- **Next work:** fix any CI failures first, then continue replacing placeholder screens with real playable game loops, migrate missing assets/source, and implement actual Socket.IO online rooms plus safe active-match exit behavior.
