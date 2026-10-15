@@ -6,9 +6,9 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 
 ## Latest verified progress — 2026-10-15
 - CI run `38718240499` passed on commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`: Flutter analyze, Flutter tests, and server tests all succeeded. Candy Match 3 and Fruit Cut syntax/test issues are resolved at that commit.
-- Pool is now being implemented as a local pass-and-play table game in `mobile/lib/games/pool_game.dart`, with score/turn tracking, drag-to-aim shots, ball movement/collisions, pockets, restart and Back controls. Home-card routing and a widget test have been added. Pool is **not counted as validated/playable until its latest CI run passes**.
-- Current follow-up CI run is testing Pool syntax and widget behavior; recheck the latest run before marking Pool complete.
-- Keep Battleship as the next preview-card game to implement after Pool validation. Online multiplayer is still not wired to these local game screens.
+- Pool is implemented as a local pass-and-play table game in `mobile/lib/games/pool_game.dart`, with score/turn tracking, drag-to-aim shots, ball movement/collisions, pockets, restart and Back controls. Home-card routing and a widget test are included. CI run `38719377649` passed: Flutter analysis, Flutter tests, and server tests succeeded. Pool is code/CI-verified but still needs device playtesting.
+- Candy Match 3 is also code/CI-verified at commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`; neither new game has been device-playtested.
+- Keep Battleship as the next preview-card game to implement. Online multiplayer is still not wired to these local game screens.
 
 ## Boundaries
 - Write only to RivalRooms; keep Two-player-online read-only.
@@ -16,7 +16,7 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 - Count a game only when its core loop works; preview cards do not count.
 - Keep visible Back navigation and explicit confirmation before leaving an active online match.
 
-## Local playable games — 8 identified
+## Local playable games — 10 code/CI-verified, not device-playtested
 1. Memory Match
 2. Basketball Hoops
 3. Fruit Cut
@@ -25,8 +25,10 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 6. Guess the Person (one clue and one answer per round)
 7. Connect Four
 8. Maths Duel
+9. Candy Match 3
+10. Pool
 
-Battleship and Pool are preview cards and are excluded. This count is based on source and CI, not device playtesting. Hexa Ring Sort generated-level solvability still needs dedicated verification.
+Battleship remains a preview card. This count is based on source and CI, not device playtesting. Hexa Ring Sort generated-level solvability still needs dedicated verification.
 
 ## Fruit Cut Arcade upgrade — validation pending
 - Arcade source commit: `64eb5302f839b9ee496d56aad0b005df6e1e04c2` — added `mobile/lib/games/fruit_cut_arcade_game.dart`.
@@ -45,7 +47,7 @@ Battleship and Pool are preview cards and are excluded. This count is based on s
 - Widget tests commit: `ca842fd9bcdeec67abbd82a278ff1648cf062e65` — added `mobile/test/candy_match3_game_test.dart` for the board HUD, Back/levels/restart controls, power-up controls, and level-map/difficulty UI.
 - Follow-up test commit: `7290cb16e25913e41ef21b56d8a9fc3fe40b2ef1` — changed the level-map assertion to avoid assuming level 50 is visible without scrolling.
 - Implemented locally in source: 7×7 match-3 grid, adjacent-swap validation, horizontal/vertical match detection, cascading gravity/refill, score/move/goal loop, Easy/Medium/Hard, 50 level slots with per-difficulty unlock progression, hammer, shuffle, color bomb, restart, visible Back, and result dialog. Level progress is currently in-memory only and does not persist across app launches.
-- Validation actually run in this environment: repository/file inspection only. Flutter/Dart tests and analyzer have NOT been run here. GitHub Actions run `38712931841` was observed in progress for test commit `ca842fd9bcdeec67abbd82a278ff1648cf062e65`; it had not reached Flutter analysis/tests at last inspection. The viewport-safe follow-up test commit `7290cb16e25913e41ef21b56d8a9fc3fe40b2ef1` should trigger a newer run. Wait for CI on the latest main commit before counting this as a verified playable game. Do not count Candy Match 3 in the playable total yet.
+- Validation actually run in this environment: repository/file inspection only. Flutter/Dart tests and analyzer have NOT been run here. GitHub Actions run `38712931841` was observed in progress for test commit `ca842fd9bcdeec67abbd82a278ff1648cf062e65`; it had not reached Flutter analysis/tests at last inspection. The viewport-safe follow-up test commit `7290cb16e25913e41ef21b56d8a9fc3fe40b2ef1` should trigger a newer run. Wait for CI on the latest main commit before counting this as a verified playable game. Candy Match 3 is now included in the code/CI-verified total after successful run `38718240499`.
 - Known gameplay caveat to check in CI/review: power-ups consume a move; ensure no analyzer/test failures and verify generated board always has a valid move. No device or Android build run.
 
 ## Latest code change
