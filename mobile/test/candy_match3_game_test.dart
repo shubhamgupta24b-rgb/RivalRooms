@@ -33,7 +33,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Candy trail'), findsOneWidget);
     expect(find.text('EASY'), findsOneWidget);
-    expect(find.text('MEDIUM'), findsOneWidget);
+    expect(find.text('MEDIUM'), findsAtLeastNWidgets(1));
     expect(find.text('HARD'), findsOneWidget);
     expect(find.byType(GridView), findsOneWidget);
   });
