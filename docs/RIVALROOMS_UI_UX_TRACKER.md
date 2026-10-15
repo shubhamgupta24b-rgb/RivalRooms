@@ -61,7 +61,7 @@ Battleship and Pool are preview cards and are excluded. This count is based on s
 - Full source, asset, and test migration from the reference repository remains incomplete. The server's legacy Fruit Duel handler is not a Fruit Cut client.
 
 ## Blockers and next work
-1. Validate Fruit Cut Arcade and Candy Match 3 with CI; fix compile/analyzer/widget-test failures and verify gameplay edge cases. Previously:  fix any compile/analyzer/widget-test failures and verify its board generation and power-up edge cases.
+1. Validate Fruit Cut Arcade and Candy Match 3 with CI; fix compile/analyzer/widget-test failures and verify gameplay edge cases. Fix compile/analyzer/widget-test failures and verify the board generation, slicing collisions, and power-up edge cases.
 2. Complete the Flutter Socket.IO connection and guest handshake; wire room creation/joining, readiness, server-owned turns/scores/timers, and safe Back/Android Back handling.
 3. Finish CI for `45a9788a1efccf38af20c548ae2cf0c6c91bbd49`, fix failures, and record the final result.
 4. Migrate remaining reference Flutter assets, source, and tests in small validated batches.
