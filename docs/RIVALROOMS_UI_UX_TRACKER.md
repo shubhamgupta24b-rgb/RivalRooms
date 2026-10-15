@@ -1,6 +1,6 @@
 # RivalRooms Implementation Tracker
 
-Last updated: 2026-10-15 16:20 (Asia/Calcutta)
+Last updated: 2026-10-15 16:45 (Asia/Calcutta)
 
 Previous detailed design and implementation notes are preserved in [RIVALROOMS_UI_UX_TRACKER_HISTORY.md](RIVALROOMS_UI_UX_TRACKER_HISTORY.md).
 
@@ -9,7 +9,8 @@ Previous detailed design and implementation notes are preserved in [RIVALROOMS_U
 - Pool is implemented as a local pass-and-play table game in `mobile/lib/games/pool_game.dart`, with score/turn tracking, drag-to-aim shots, ball movement/collisions, pockets, restart and Back controls. Home-card routing and a widget test are included. CI run `38719377649` passed: Flutter analysis, Flutter tests, and server tests succeeded. Pool is code/CI-verified but still needs device playtesting.
 - Candy Match 3 is code/CI-verified at commit `61b1d6f7c62830c16d345ce043a65b99da7ceafc`.
 - Battleship is implemented in `mobile/lib/games/battleship_game.dart`: randomized starting player, hidden-fleet handoff curtain between turns, generated non-overlapping fleets, hit/miss tracking, sunk-ship detection, restart/rematch and Back controls. Home-card routing and a widget test are included. CI run `38719682315` passed Flutter analysis, Flutter tests and server tests.
-- Memory Match now supports 8, 12, 16, 20, 24, 28 or 32 cards locally; selection regenerates the board and resets moves. Added `mobile/test/memory_card_count_test.dart`. CI run `38720008438` passed Flutter analysis, Flutter tests and server tests.
+- Memory Match supports 8, 12, 16, 20, 24, 28 or 32 cards locally; selection regenerates the board and resets moves. Added `mobile/test/memory_card_count_test.dart`. CI run `38720008438` passed Flutter analysis, Flutter tests and server tests.
+- Hexa Ring Sort now has a 50-level map with Easy/Medium/Hard filtering and locked/unlocked level selection. The new widget test exposed and fixed a real level-generation crash: mutable stack lists are now growable. CI run `38720535999` passed Flutter analysis, Flutter tests and server tests. Generated-level solvability still needs a dedicated solver/property test.
 - Pool and Battleship are local pass-and-play implementations; neither has been device-playtested, and neither is online-synchronized. Memory card count is not yet wired to room creation. Online multiplayer remains a separate unfinished integration.
 
 ## Boundaries
