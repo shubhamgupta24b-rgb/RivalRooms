@@ -94,3 +94,10 @@ The 50-playable-game target for 2026-10-15 17:00 is not currently realistic. Pri
 - Commit sequence: game `7997e2a1`, home/library route `36f7a9ab`, widget test `d243bddf`.
 - This is local pass-and-play only. CI and on-device validation have not been confirmed; do not count it as verified until Flutter analysis/tests pass.
 - Bike Racing, Carrom and Chicken Jump remain additional local game implementations with CI validation pending. Online synchronization is still unfinished.
+
+
+### Raja Mantri Chor Sipahi follow-up
+- Improved the guessing phase so the UI identifies which player is Sipahi and only offers the other three players as valid guesses; the Sipahi can no longer select themselves.
+- Updated the widget test to assert that the guessing phase exposes exactly three targets.
+- Follow-up commits: game logic/UI `5452e667`; widget test `ce170413`.
+- CI and device validation remain unconfirmed; still local pass-and-play only.
